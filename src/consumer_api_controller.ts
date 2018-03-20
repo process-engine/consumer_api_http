@@ -13,6 +13,7 @@ import {
 } from '@process-engine/consumer_api_contracts';
 
 import {ExecutionContext, IIamService} from '@essential-projects/core_contracts';
+import * as Errors from '@essential-projects/errors_ts';
 
 import {Request, Response} from 'express';
 
@@ -61,8 +62,11 @@ export class ConsumerApiController implements IConsumerApiController {
       returnOn = ProcessStartReturnOnOptions.onProcessInstanceStarted;
     }
 
+    // TODO: This is probably a better job for a HTTP Extension.
+    const context: ExecutionContext = await this.resolveExecutionContext(request);
+
     const result: IProcessStartResponsePayload =
-      await this.consumerApiService.startProcess(processModelKey, startEventKey, payload, returnOn);
+      await this.consumerApiService.startProcess(context, processModelKey, startEventKey, payload, returnOn);
 
     response.status(this.httpCodeSuccessfulResponse).json(result);
   }
@@ -73,8 +77,11 @@ export class ConsumerApiController implements IConsumerApiController {
     const endEventKey: string = request.params.end_event_key;
     const payload: IProcessStartRequestPayload = request.body;
 
+    // TODO: This is probably a better job for a HTTP Extension.
+    const context: ExecutionContext = await this.resolveExecutionContext(request);
+
     const result: IProcessStartResponsePayload =
-      await this.consumerApiService.startProcessAndAwaitEndEvent(processModelKey, startEventKey, endEventKey, payload);
+      await this.consumerApiService.startProcessAndAwaitEndEvent(context, processModelKey, startEventKey, endEventKey, payload);
 
     response.status(this.httpCodeSuccessfulResponse).json(result);
   }
@@ -151,5 +158,24 @@ export class ConsumerApiController implements IConsumerApiController {
     await this.consumerApiService.finishUserTask(processModelKey, correlationId, userTaskId, userTaskResult);
 
     response.status(this.httpCodeSuccessfulNoContentResponse).send();
+  }
+
+  private async resolveExecutionContext(request: Request): Promise<ExecutionContext> {
+    try {
+      let bearerToken: string;
+      const authorizationHeader: string = request.headers.authorization as string;
+
+      // first try auth header
+      if (typeof authorizationHeader !== 'string') {
+        throw new Errors.UnauthorizedError('No auth token provided!');
+      }
+
+      const authorizationHeaderValues: Array<string> = authorizationHeader.split(' ');
+      bearerToken = authorizationHeaderValues[1];
+
+      return this.iamService.resolveExecutionContext(bearerToken);
+    } catch (err) {
+      throw new Errors.UnauthorizedError(err.message);
+    }
   }
 }
