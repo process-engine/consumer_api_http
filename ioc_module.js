@@ -14,8 +14,6 @@ function registerInContainer(container) {
 
   container.register('ConsumerApiController', ConsumerApiController)
     .dependencies('ConsumerApiService');
-
-  container.register('ConsumerApiService', ConsumerApiService);
 }
 
 module.exports.registerInContainer = registerInContainer;
