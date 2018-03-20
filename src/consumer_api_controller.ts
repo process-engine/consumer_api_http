@@ -196,36 +196,18 @@ export class ConsumerApiController implements IConsumerApiController {
   }
 
   private resolveCustomerContext(request: Request): IConsumerContext {
-    try {
-      const bearerToken: string = this.getHeaderValue(request, 'authorization');
+    const bearerToken: string = request.get('authorization');
 
-      if (!bearerToken) {
-        throw new Errors.UnauthorizedError('No auth token provided!');
-      }
-
-      // TODO: Maybe retrieve other header values?
-      const consumerContext: IConsumerContext = {
-        authorization: bearerToken,
-        Internationalization: this.getHeaderValue(request, 'accept-language'),
-      };
-
-      return consumerContext;
-    } catch (err) {
-      throw new Errors.UnauthorizedError(err.message);
-    }
-  }
-
-  private getHeaderValue(request: Request, headerName: string): string {
-
-    const header: string = request.headers[headerName] as string;
-
-    if (!header) {
-      return;
+    if (!bearerToken) {
+      throw new Errors.UnauthorizedError('No auth token provided!');
     }
 
-    const headerValueParts: Array<string> = header.split(' ');
-    const headerValue: string = headerValueParts[1];
+    // TODO: Maybe retrieve other header values?
+    const consumerContext: IConsumerContext = {
+      authorization: bearerToken,
+      Internationalization: request.get('accept-language'),
+    };
 
-    return headerValue;
+    return consumerContext;
   }
 }
