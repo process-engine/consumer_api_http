@@ -25,54 +25,42 @@ export class ConsumerApiRouter extends BaseRouter implements IConsumerApiRouter 
   public async initializeRouter(): Promise<void> {
 
     // process-model-routes
-    this.router.get(restSettings.paths.processModels, wrap((request: Request, response: Response, next: NextFunction): void => {
-      this.consumerApiRestController.getProcessModels(request, response);
-    }));
+    this.router.get(restSettings.paths.processModels,
+                    wrap(this.consumerApiRestController.getProcessModels.bind(this.consumerApiRestController)));
 
-    this.router.get(restSettings.paths.processModelByKey, wrap((request: Request, response: Response, next: NextFunction): void => {
-      this.consumerApiRestController.getProcessModelByKey(request, response);
-    }));
+    this.router.get(restSettings.paths.processModelByKey,
+                    wrap(this.consumerApiRestController.getProcessModelByKey.bind(this.consumerApiRestController)));
 
-    this.router.post(restSettings.paths.startProcess, wrap((request: Request, response: Response, next: NextFunction): void => {
-      this.consumerApiRestController.startProcess(request, response);
-    }));
+    this.router.post(restSettings.paths.startProcess,
+                     wrap(this.consumerApiRestController.startProcess.bind(this.consumerApiRestController)));
 
-    this.router.post(restSettings.paths.startProcessAndAwaitEndEvent, wrap((request: Request, response: Response, next: NextFunction): void => {
-      this.consumerApiRestController.startProcessAndAwaitEndEvent(request, response);
-    }));
+    this.router.post(restSettings.paths.startProcessAndAwaitEndEvent,
+                     wrap(this.consumerApiRestController.startProcessAndAwaitEndEvent.bind(this.consumerApiRestController)));
 
     // event-routes
-    this.router.get(restSettings.paths.processModelEvents, wrap((request: Request, response: Response, next: NextFunction): void => {
-      this.consumerApiRestController.getEventsForProcessModel(request, response);
-    }));
+    this.router.get(restSettings.paths.processModelEvents,
+                    wrap(this.consumerApiRestController.getEventsForProcessModel.bind(this.consumerApiRestController)));
 
-    this.router.get(restSettings.paths.correlationEvents, wrap((request: Request, response: Response, next: NextFunction): void => {
-      this.consumerApiRestController.getEventsForCorrelation(request, response);
-    }));
+    this.router.get(restSettings.paths.correlationEvents,
+                    wrap(this.consumerApiRestController.getEventsForCorrelation.bind(this.consumerApiRestController)));
 
-    this.router.get(restSettings.paths.processModelCorrelationEvents, wrap((request: Request, response: Response, next: NextFunction): void => {
-      this.consumerApiRestController.getEventsForProcessModelInCorrelation(request, response);
-    }));
+    this.router.get(restSettings.paths.processModelCorrelationEvents,
+                    wrap(this.consumerApiRestController.getEventsForProcessModelInCorrelation.bind(this.consumerApiRestController)));
 
-    this.router.post(restSettings.paths.triggerEvent, wrap((request: Request, response: Response, next: NextFunction): void => {
-      this.consumerApiRestController.triggerEvent(request, response);
-    }));
+    this.router.post(restSettings.paths.triggerEvent,
+                     wrap(this.consumerApiRestController.triggerEvent.bind(this.consumerApiRestController)));
 
     // user-task-routes
-    this.router.get(restSettings.paths.processModelUserTasks, wrap((request: Request, response: Response, next: NextFunction): void => {
-      this.consumerApiRestController.getUserTasksForProcessModel(request, response);
-    }));
+    this.router.get(restSettings.paths.processModelUserTasks,
+                    wrap(this.consumerApiRestController.getUserTasksForProcessModel.bind(this.consumerApiRestController)));
 
-    this.router.get(restSettings.paths.correlationUserTasks, wrap((request: Request, response: Response, next: NextFunction): void => {
-      this.consumerApiRestController.getUserTasksForCorrelation(request, response);
-    }));
+    this.router.get(restSettings.paths.correlationUserTasks,
+                    wrap(this.consumerApiRestController.getUserTasksForCorrelation.bind(this.consumerApiRestController)));
 
-    this.router.get(restSettings.paths.processModelCorrelationUserTasks, wrap((request: Request, response: Response, next: NextFunction): void => {
-      this.consumerApiRestController.getUserTasksForProcessModelInCorrelation(request, response);
-    }));
+    this.router.get(restSettings.paths.processModelCorrelationUserTasks,
+                    wrap(this.consumerApiRestController.getUserTasksForProcessModelInCorrelation.bind(this.consumerApiRestController)));
 
-    this.router.post(restSettings.paths.finishUserTask, wrap((request: Request, response: Response, next: NextFunction): void => {
-      this.consumerApiRestController.finishUserTask(request, response);
-    }));
+    this.router.post(restSettings.paths.finishUserTask,
+                     wrap(this.consumerApiRestController.finishUserTask.bind(this.consumerApiRestController)));
   }
 }
