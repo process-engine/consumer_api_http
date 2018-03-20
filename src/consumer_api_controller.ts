@@ -11,21 +11,31 @@ import {
   IUserTaskResult,
   ProcessStartReturnOnOptions,
 } from '@process-engine/consumer_api_contracts';
+
+import {ExecutionContext, IIamService} from '@essential-projects/core_contracts';
+
 import {Request, Response} from 'express';
 
 export class ConsumerApiController implements IConsumerApiController {
   public config: any = undefined;
-  private _consumerApiService: IConsumerApiService;
 
   private httpCodeSuccessfulResponse: number = 200;
   private httpCodeSuccessfulNoContentResponse: number = 204;
 
-  constructor(consumerApiService: IConsumerApiService) {
+  private _consumerApiService: IConsumerApiService;
+  private _iamService: IIamService;
+
+  constructor(consumerApiService: IConsumerApiService, iamService: IIamService) {
     this._consumerApiService = consumerApiService;
+    this._iamService = iamService;
   }
 
   private get consumerApiService(): IConsumerApiService {
     return this._consumerApiService;
+  }
+
+  private get iamService(): IIamService {
+    return this._iamService;
   }
 
   public async getProcessModels(request: Request, response: Response): Promise<void> {

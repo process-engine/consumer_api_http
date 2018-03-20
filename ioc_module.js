@@ -13,7 +13,7 @@ function registerInContainer(container) {
     .tags(routerDiscoveryTag);
 
   container.register('ConsumerApiController', ConsumerApiController)
-    .dependencies('ConsumerApiService');
+    .dependencies('ConsumerApiService', 'IamService');
 }
 
 module.exports.registerInContainer = registerInContainer;
