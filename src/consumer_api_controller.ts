@@ -1,16 +1,16 @@
 import {
+  ConsumerContext,
+  EventList,
+  EventTriggerPayload,
   IConsumerApiController,
   IConsumerApiService,
-  IConsumerContext,
-  IEventList,
-  IEventTriggerPayload,
-  IProcessModel,
-  IProcessModelList,
-  IProcessStartRequestPayload,
-  IProcessStartResponsePayload,
-  IUserTaskList,
-  IUserTaskResult,
+  ProcessModel,
+  ProcessModelList,
+  ProcessStartRequestPayload,
+  ProcessStartResponsePayload,
   ProcessStartReturnOnOptions,
+  UserTaskList,
+  UserTaskResult,
 } from '@process-engine/consumer_api_contracts';
 
 import {ExecutionContext, IIamService} from '@essential-projects/core_contracts';
@@ -45,9 +45,9 @@ export class ConsumerApiController implements IConsumerApiController {
   public async getProcessModels(request: Request, response: Response): Promise<void> {
 
     // TODO: Move to HTTP middleware in a custom http extension?
-    const context: IConsumerContext = this.resolveCustomerContext(request);
+    const context: ConsumerContext = this.resolveCustomerContext(request);
 
-    const result: IProcessModelList = await this.consumerApiService.getProcessModels(context);
+    const result: ProcessModelList = await this.consumerApiService.getProcessModels(context);
 
     response.status(this.httpCodeSuccessfulResponse).json(result);
   }
@@ -56,9 +56,9 @@ export class ConsumerApiController implements IConsumerApiController {
     const processModelKey: string = request.params.process_model_key;
 
     // TODO: Move to HTTP middleware in a custom http extension?
-    const context: IConsumerContext = this.resolveCustomerContext(request);
+    const context: ConsumerContext = this.resolveCustomerContext(request);
 
-    const result: IProcessModel = await this.consumerApiService.getProcessModelByKey(context, processModelKey);
+    const result: ProcessModel = await this.consumerApiService.getProcessModelByKey(context, processModelKey);
 
     response.status(this.httpCodeSuccessfulResponse).json(result);
   }
@@ -66,7 +66,7 @@ export class ConsumerApiController implements IConsumerApiController {
   public async startProcess(request: Request, response: Response): Promise<void> {
     const processModelKey: string = request.params.process_model_key;
     const startEventKey: string = request.params.start_event_key;
-    const payload: IProcessStartRequestPayload = request.body;
+    const payload: ProcessStartRequestPayload = request.body;
     let returnOn: ProcessStartReturnOnOptions = request.query.return_on;
 
     if (!returnOn) {
@@ -74,9 +74,9 @@ export class ConsumerApiController implements IConsumerApiController {
     }
 
     // TODO: Move to HTTP middleware in a custom http extension?
-    const context: IConsumerContext = this.resolveCustomerContext(request);
+    const context: ConsumerContext = this.resolveCustomerContext(request);
 
-    const result: IProcessStartResponsePayload =
+    const result: ProcessStartResponsePayload =
       await this.consumerApiService.startProcess(context, processModelKey, startEventKey, payload, returnOn);
 
     response.status(this.httpCodeSuccessfulResponse).json(result);
@@ -86,12 +86,12 @@ export class ConsumerApiController implements IConsumerApiController {
     const processModelKey: string = request.params.process_model_key;
     const startEventKey: string = request.params.start_event_key;
     const endEventKey: string = request.params.end_event_key;
-    const payload: IProcessStartRequestPayload = request.body;
+    const payload: ProcessStartRequestPayload = request.body;
 
     // TODO: Move to HTTP middleware in a custom http extension?
-    const context: IConsumerContext = this.resolveCustomerContext(request);
+    const context: ConsumerContext = this.resolveCustomerContext(request);
 
-    const result: IProcessStartResponsePayload =
+    const result: ProcessStartResponsePayload =
       await this.consumerApiService.startProcessAndAwaitEndEvent(context, processModelKey, startEventKey, endEventKey, payload);
 
     response.status(this.httpCodeSuccessfulResponse).json(result);
@@ -102,9 +102,9 @@ export class ConsumerApiController implements IConsumerApiController {
     const processModelKey: string = request.params.process_model_key;
 
     // TODO: Move to HTTP middleware in a custom http extension?
-    const context: IConsumerContext = this.resolveCustomerContext(request);
+    const context: ConsumerContext = this.resolveCustomerContext(request);
 
-    const result: IEventList = await this.consumerApiService.getEventsForProcessModel(context, processModelKey);
+    const result: EventList = await this.consumerApiService.getEventsForProcessModel(context, processModelKey);
 
     response.status(this.httpCodeSuccessfulResponse).json(result);
   }
@@ -113,9 +113,9 @@ export class ConsumerApiController implements IConsumerApiController {
     const correlationId: string = request.params.correlation_id;
 
     // TODO: Move to HTTP middleware in a custom http extension?
-    const context: IConsumerContext = this.resolveCustomerContext(request);
+    const context: ConsumerContext = this.resolveCustomerContext(request);
 
-    const result: IEventList = await this.consumerApiService.getEventsForCorrelation(context, correlationId);
+    const result: EventList = await this.consumerApiService.getEventsForCorrelation(context, correlationId);
 
     response.status(this.httpCodeSuccessfulResponse).json(result);
   }
@@ -125,9 +125,9 @@ export class ConsumerApiController implements IConsumerApiController {
     const correlationId: string = request.params.correlation_id;
 
     // TODO: Move to HTTP middleware in a custom http extension?
-    const context: IConsumerContext = this.resolveCustomerContext(request);
+    const context: ConsumerContext = this.resolveCustomerContext(request);
 
-    const result: IEventList = await this.consumerApiService.getEventsForProcessModelInCorrelation(context, processModelKey, correlationId);
+    const result: EventList = await this.consumerApiService.getEventsForProcessModelInCorrelation(context, processModelKey, correlationId);
 
     response.status(this.httpCodeSuccessfulResponse).json(result);
   }
@@ -136,10 +136,10 @@ export class ConsumerApiController implements IConsumerApiController {
     const processModelKey: string = request.params.process_model_key;
     const correlationId: string = request.params.correlation_id;
     const eventId: string = request.params.event_id;
-    const eventTriggerPayload: IEventTriggerPayload = request.body;
+    const eventTriggerPayload: EventTriggerPayload = request.body;
 
     // TODO: Move to HTTP middleware in a custom http extension?
-    const context: IConsumerContext = this.resolveCustomerContext(request);
+    const context: ConsumerContext = this.resolveCustomerContext(request);
 
     await this.consumerApiService.triggerEvent(context, processModelKey, correlationId, eventId, eventTriggerPayload);
 
@@ -151,9 +151,9 @@ export class ConsumerApiController implements IConsumerApiController {
     const processModelKey: string = request.params.process_model_key;
 
     // TODO: Move to HTTP middleware in a custom http extension?
-    const context: IConsumerContext = this.resolveCustomerContext(request);
+    const context: ConsumerContext = this.resolveCustomerContext(request);
 
-    const result: IUserTaskList = await this.consumerApiService.getUserTasksForProcessModel(context, processModelKey);
+    const result: UserTaskList = await this.consumerApiService.getUserTasksForProcessModel(context, processModelKey);
 
     response.status(this.httpCodeSuccessfulResponse).json(result);
   }
@@ -162,9 +162,9 @@ export class ConsumerApiController implements IConsumerApiController {
     const correlationId: string = request.params.correlation_id;
 
     // TODO: Move to HTTP middleware in a custom http extension?
-    const context: IConsumerContext = this.resolveCustomerContext(request);
+    const context: ConsumerContext = this.resolveCustomerContext(request);
 
-    const result: IUserTaskList = await this.consumerApiService.getUserTasksForCorrelation(context, correlationId);
+    const result: UserTaskList = await this.consumerApiService.getUserTasksForCorrelation(context, correlationId);
 
     response.status(this.httpCodeSuccessfulResponse).json(result);
   }
@@ -174,9 +174,9 @@ export class ConsumerApiController implements IConsumerApiController {
     const correlationId: string = request.params.correlation_id;
 
     // TODO: Move to HTTP middleware in a custom http extension?
-    const context: IConsumerContext = this.resolveCustomerContext(request);
+    const context: ConsumerContext = this.resolveCustomerContext(request);
 
-    const result: IUserTaskList = await this.consumerApiService.getUserTasksForProcessModelInCorrelation(context, processModelKey, correlationId);
+    const result: UserTaskList = await this.consumerApiService.getUserTasksForProcessModelInCorrelation(context, processModelKey, correlationId);
 
     response.status(this.httpCodeSuccessfulResponse).json(result);
   }
@@ -185,17 +185,17 @@ export class ConsumerApiController implements IConsumerApiController {
     const processModelKey: string = request.params.process_model_key;
     const correlationId: string = request.params.correlation_id;
     const userTaskId: string = request.params.event_id;
-    const userTaskResult: IUserTaskResult = request.body;
+    const userTaskResult: UserTaskResult = request.body;
 
     // TODO: Move to HTTP middleware in a custom http extension?
-    const context: IConsumerContext = this.resolveCustomerContext(request);
+    const context: ConsumerContext = this.resolveCustomerContext(request);
 
     await this.consumerApiService.finishUserTask(context, processModelKey, correlationId, userTaskId, userTaskResult);
 
     response.status(this.httpCodeSuccessfulNoContentResponse).send();
   }
 
-  private resolveCustomerContext(request: Request): IConsumerContext {
+  private resolveCustomerContext(request: Request): ConsumerContext {
     const bearerToken: string = request.get('authorization');
 
     if (!bearerToken) {
@@ -203,7 +203,7 @@ export class ConsumerApiController implements IConsumerApiController {
     }
 
     // TODO: Maybe retrieve other header values?
-    const consumerContext: IConsumerContext = {
+    const consumerContext: ConsumerContext = {
       authorization: bearerToken,
       Internationalization: request.get('accept-language'),
     };
