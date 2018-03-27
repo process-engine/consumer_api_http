@@ -184,7 +184,7 @@ export class ConsumerApiController implements IConsumerApiController {
   public async finishUserTask(request: Request, response: Response): Promise<void> {
     const processModelKey: string = request.params.process_model_key;
     const correlationId: string = request.params.correlation_id;
-    const userTaskId: string = request.params.event_id;
+    const userTaskId: string = request.params.user_task_id;
     const userTaskResult: UserTaskResult = request.body;
 
     // TODO: Move to HTTP middleware in a custom http extension?
