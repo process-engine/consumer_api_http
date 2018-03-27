@@ -204,7 +204,7 @@ export class ConsumerApiController implements IConsumerApiController {
 
     // TODO: Maybe retrieve other header values?
     const consumerContext: ConsumerContext = {
-      authorization: bearerToken,
+      identiy: bearerToken.substr('Bearer '.length),
       Internationalization: request.get('accept-language'),
     };
 
