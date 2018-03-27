@@ -19,7 +19,7 @@
   },
   "homepage": "https://github.com/process-engine/consumer_api#readme",
   "dependencies": {
-    "@essential-projects/core_contracts": "^0.3.0",
+    "@essential-projects/core_contracts": "^1.0.0",
     "@essential-projects/errors_ts": "^1.0.0",
     "@essential-projects/http_node": "^1.0.0",
     "@process-engine/consumer_api_contracts": "feature~user_tasks",
