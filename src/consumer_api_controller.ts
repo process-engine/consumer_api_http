@@ -23,8 +23,6 @@ export class ConsumerApiController {
 
   private httpCodeSuccessfulResponse: number = 200;
   private httpCodeSuccessfulNoContentResponse: number = 204;
-  private httpCodeErrorUnauthorized: number = 401;
-  private httpCodeErrorForbidden: number = 403;
 
   private _consumerApiService: IConsumerApiService;
   private _iamService: IIamService;
