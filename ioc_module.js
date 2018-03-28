@@ -10,10 +10,12 @@ const routerDiscoveryTag = require('@essential-projects/core_contracts').RouterD
 function registerInContainer(container) {
   container.register('ConsumerApiRouter', ConsumerApiRouter)
     .dependencies('ConsumerApiController')
+    .singleton()
     .tags(routerDiscoveryTag);
 
   container.register('ConsumerApiController', ConsumerApiController)
-    .dependencies('ConsumerApiService', 'IamService');
+    .dependencies('ConsumerApiService', 'IamService')
+    .singleton();
 }
 
 module.exports.registerInContainer = registerInContainer;
