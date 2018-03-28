@@ -9,7 +9,6 @@ export function resolveCustomerContext(request: ConsumerRequest, response: Respo
     throw new UnauthorizedError('No auth token provided!');
   }
 
-  // TODO: Maybe retrieve other header values?
   request.consumerContext = {
     identity: bearerToken.substr('Bearer '.length),
     Internationalization: request.get('accept-language'),
