@@ -8,7 +8,7 @@ import {
   ProcessModelList,
   ProcessStartRequestPayload,
   ProcessStartResponsePayload,
-  ProcessStartReturnOnOptions,
+  StartCallbackType,
   UserTaskList,
   UserTaskResult,
 } from '@process-engine/consumer_api_contracts';
@@ -61,16 +61,16 @@ export class ConsumerApiController {
     const processModelKey: string = request.params.process_model_key;
     const startEventKey: string = request.params.start_event_key;
     const payload: ProcessStartRequestPayload = request.body;
-    let returnOn: ProcessStartReturnOnOptions = request.query.return_on;
+    let startCallbackType: StartCallbackType = <StartCallbackType> Number.parseInt(request.query.start_callback_type);
 
-    if (!returnOn) {
-      returnOn = ProcessStartReturnOnOptions.onProcessInstanceStarted;
+    if (!startCallbackType) {
+      startCallbackType = StartCallbackType.CallbackOnProcessInstanceCreated;
     }
 
     const context: ConsumerContext = request.consumerContext;
 
     const result: ProcessStartResponsePayload =
-      await this.consumerApiService.startProcessInstance(context, processModelKey, startEventKey, payload, returnOn);
+      await this.consumerApiService.startProcessInstance(context, processModelKey, startEventKey, payload, startCallbackType);
 
     response.status(this.httpCodeSuccessfulResponse).json(result);
   }
