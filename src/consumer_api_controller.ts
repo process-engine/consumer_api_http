@@ -8,7 +8,7 @@ import {
   ProcessModelList,
   ProcessStartRequestPayload,
   ProcessStartResponsePayload,
-  ProcessStartReturnOnOptions,
+  StartCallbackType,
   UserTaskList,
   UserTaskResult,
 } from '@process-engine/consumer_api_contracts';
@@ -57,25 +57,25 @@ export class ConsumerApiController {
     response.status(this.httpCodeSuccessfulResponse).json(result);
   }
 
-  public async startProcess(request: ConsumerRequest, response: Response): Promise<void> {
+  public async startProcessInstance(request: ConsumerRequest, response: Response): Promise<void> {
     const processModelKey: string = request.params.process_model_key;
     const startEventKey: string = request.params.start_event_key;
     const payload: ProcessStartRequestPayload = request.body;
-    let returnOn: ProcessStartReturnOnOptions = request.query.return_on;
+    let startCallbackType: StartCallbackType = <StartCallbackType> Number.parseInt(request.query.start_callback_type);
 
-    if (!returnOn) {
-      returnOn = ProcessStartReturnOnOptions.onProcessInstanceStarted;
+    if (!startCallbackType) {
+      startCallbackType = StartCallbackType.CallbackOnProcessInstanceCreated;
     }
 
     const context: ConsumerContext = request.consumerContext;
 
     const result: ProcessStartResponsePayload =
-      await this.consumerApiService.startProcess(context, processModelKey, startEventKey, payload, returnOn);
+      await this.consumerApiService.startProcessInstance(context, processModelKey, startEventKey, payload, startCallbackType);
 
     response.status(this.httpCodeSuccessfulResponse).json(result);
   }
 
-  public async startProcessAndAwaitEndEvent(request: ConsumerRequest, response: Response): Promise<void> {
+  public async startProcessInstanceAndAwaitEndEvent(request: ConsumerRequest, response: Response): Promise<void> {
     const processModelKey: string = request.params.process_model_key;
     const startEventKey: string = request.params.start_event_key;
     const endEventKey: string = request.params.end_event_key;
@@ -83,7 +83,7 @@ export class ConsumerApiController {
     const context: ConsumerContext = request.consumerContext;
 
     const result: ProcessStartResponsePayload =
-      await this.consumerApiService.startProcessAndAwaitEndEvent(context, processModelKey, startEventKey, endEventKey, payload);
+      await this.consumerApiService.startProcessInstanceAndAwaitEndEvent(context, processModelKey, startEventKey, endEventKey, payload);
 
     response.status(this.httpCodeSuccessfulResponse).json(result);
   }
