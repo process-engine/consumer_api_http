@@ -89,11 +89,12 @@ export class ConsumerApiController {
     response.status(this.httpCodeSuccessfulResponse).json(result);
   }
 
-  public async getCorrelationResults(request: ConsumerRequest, response: Response): Promise<void> {
+  public async getCorrelationProcessModelResult(request: ConsumerRequest, response: Response): Promise<void> {
     const correlationId: string = request.params.correlation_id;
+    const processModelKey: string = request.params.process_model_key;
     const context: ConsumerContext = request.consumerContext;
 
-    const result: ICorrelationResult = await this.consumerApiService.getCorrelationResults(context, correlationId);
+    const result: ICorrelationResult = await this.consumerApiService.getCorrelationProcessModelResult(context, correlationId, processModelKey);
 
     response.status(this.httpCodeSuccessfulResponse).json(result);
   }
