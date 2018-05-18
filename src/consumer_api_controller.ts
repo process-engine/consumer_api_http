@@ -4,6 +4,7 @@ import {
   EventList,
   EventTriggerPayload,
   IConsumerApiService,
+  ICorrelationResult,
   ProcessModel,
   ProcessModelList,
   ProcessStartRequestPayload,
@@ -84,6 +85,15 @@ export class ConsumerApiController {
 
     const result: ProcessStartResponsePayload =
       await this.consumerApiService.startProcessInstanceAndAwaitEndEvent(context, processModelKey, startEventKey, endEventKey, payload);
+
+    response.status(this.httpCodeSuccessfulResponse).json(result);
+  }
+
+  public async getCorrelationResults(request: ConsumerRequest, response: Response): Promise<void> {
+    const correlationId: string = request.params.correlation_id;
+    const context: ConsumerContext = request.consumerContext;
+
+    const result: ICorrelationResult = await this.consumerApiService.getCorrelationResults(context, correlationId);
 
     response.status(this.httpCodeSuccessfulResponse).json(result);
   }
