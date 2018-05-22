@@ -11,7 +11,7 @@ export function resolveCustomerContext(request: ConsumerRequest, response: Respo
 
   request.consumerContext = {
     identity: bearerToken.substr('Bearer '.length),
-    Internationalization: request.get('accept-language'),
+    internationalization: request.get('accept-language'),
   };
 
   next();
