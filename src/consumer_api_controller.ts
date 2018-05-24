@@ -14,7 +14,6 @@ import {
   UserTaskResult,
 } from '@process-engine/consumer_api_contracts';
 
-import {ExecutionContext, IIamService} from '@essential-projects/core_contracts';
 import * as Errors from '@essential-projects/errors_ts';
 
 import {Request, Response} from 'express';
@@ -26,19 +25,13 @@ export class ConsumerApiController {
   private httpCodeSuccessfulNoContentResponse: number = 204;
 
   private _consumerApiService: IConsumerApiService;
-  private _iamService: IIamService;
 
-  constructor(consumerApiService: IConsumerApiService, iamService: IIamService) {
+  constructor(consumerApiService: IConsumerApiService) {
     this._consumerApiService = consumerApiService;
-    this._iamService = iamService;
   }
 
   private get consumerApiService(): IConsumerApiService {
     return this._consumerApiService;
-  }
-
-  private get iamService(): IIamService {
-    return this._iamService;
   }
 
   public async getProcessModels(request: ConsumerRequest, response: Response): Promise<void> {
