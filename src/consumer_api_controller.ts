@@ -14,9 +14,7 @@ import {
   UserTaskResult,
 } from '@process-engine/consumer_api_contracts';
 
-import * as Errors from '@essential-projects/errors_ts';
-
-import {Request, Response} from 'express';
+import {Response} from 'express';
 
 export class ConsumerApiController {
   public config: any = undefined;
