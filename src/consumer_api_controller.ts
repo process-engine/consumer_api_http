@@ -76,8 +76,10 @@ export class ConsumerApiController {
     const payload: ProcessStartRequestPayload = request.body;
     const context: ConsumerContext = request.consumerContext;
 
+    const startCallbackType: StartCallbackType = StartCallbackType.CallbackOnEndEventReached;
+
     const result: ProcessStartResponsePayload =
-      await this.consumerApiService.startProcessInstanceAndAwaitEndEvent(context, processModelKey, startEventKey, endEventKey, payload);
+      await this.consumerApiService.startProcessInstance(context, processModelKey, startEventKey, payload, startCallbackType, endEventKey);
 
     response.status(this.httpCodeSuccessfulResponse).json(result);
   }
