@@ -52,6 +52,7 @@ export class ConsumerApiController {
   public async startProcessInstance(request: ConsumerRequest, response: Response): Promise<void> {
     const processModelKey: string = request.params.process_model_key;
     const startEventKey: string = request.params.start_event_key;
+    const endEventKey: string = request.query.end_event_key;
     const payload: ProcessStartRequestPayload = request.body;
     let startCallbackType: StartCallbackType = <StartCallbackType> Number.parseInt(request.query.start_callback_type);
 
@@ -60,21 +61,6 @@ export class ConsumerApiController {
     }
 
     const context: ConsumerContext = request.consumerContext;
-
-    const result: ProcessStartResponsePayload =
-      await this.consumerApiService.startProcessInstance(context, processModelKey, startEventKey, payload, startCallbackType);
-
-    response.status(this.httpCodeSuccessfulResponse).json(result);
-  }
-
-  public async startProcessInstanceAndAwaitEndEvent(request: ConsumerRequest, response: Response): Promise<void> {
-    const processModelKey: string = request.params.process_model_key;
-    const startEventKey: string = request.params.start_event_key;
-    const endEventKey: string = request.params.end_event_key;
-    const payload: ProcessStartRequestPayload = request.body;
-    const context: ConsumerContext = request.consumerContext;
-
-    const startCallbackType: StartCallbackType = StartCallbackType.CallbackOnEndEventReached;
 
     const result: ProcessStartResponsePayload =
       await this.consumerApiService.startProcessInstance(context, processModelKey, startEventKey, payload, startCallbackType, endEventKey);
