@@ -14,9 +14,7 @@ import {
   UserTaskResult,
 } from '@process-engine/consumer_api_contracts';
 
-import * as Errors from '@essential-projects/errors_ts';
-
-import {Request, Response} from 'express';
+import {Response} from 'express';
 
 export class ConsumerApiController {
   public config: any = undefined;
@@ -54,6 +52,7 @@ export class ConsumerApiController {
   public async startProcessInstance(request: ConsumerRequest, response: Response): Promise<void> {
     const processModelKey: string = request.params.process_model_key;
     const startEventKey: string = request.params.start_event_key;
+    const endEventKey: string = request.query.end_event_key;
     const payload: ProcessStartRequestPayload = request.body;
     let startCallbackType: StartCallbackType = <StartCallbackType> Number.parseInt(request.query.start_callback_type);
 
@@ -64,20 +63,7 @@ export class ConsumerApiController {
     const context: ConsumerContext = request.consumerContext;
 
     const result: ProcessStartResponsePayload =
-      await this.consumerApiService.startProcessInstance(context, processModelKey, startEventKey, payload, startCallbackType);
-
-    response.status(this.httpCodeSuccessfulResponse).json(result);
-  }
-
-  public async startProcessInstanceAndAwaitEndEvent(request: ConsumerRequest, response: Response): Promise<void> {
-    const processModelKey: string = request.params.process_model_key;
-    const startEventKey: string = request.params.start_event_key;
-    const endEventKey: string = request.params.end_event_key;
-    const payload: ProcessStartRequestPayload = request.body;
-    const context: ConsumerContext = request.consumerContext;
-
-    const result: ProcessStartResponsePayload =
-      await this.consumerApiService.startProcessInstanceAndAwaitEndEvent(context, processModelKey, startEventKey, endEventKey, payload);
+      await this.consumerApiService.startProcessInstance(context, processModelKey, startEventKey, payload, startCallbackType, endEventKey);
 
     response.status(this.httpCodeSuccessfulResponse).json(result);
   }
