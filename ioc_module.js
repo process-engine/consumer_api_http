@@ -14,7 +14,7 @@ function registerInContainer(container) {
     .tags(routerDiscoveryTag);
 
   container.register('ConsumerApiController', ConsumerApiController)
-    .dependencies('ConsumerApiService', 'IamService')
+    .dependencies('ConsumerApiService')
     .singleton();
 }
 
