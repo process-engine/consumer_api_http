@@ -1,6 +1,6 @@
 {
   "name": "@process-engine/consumer_api_http",
-  "version": "0.9.3",
+  "version": "0.9.4",
   "description": "the http-package for process-engine-consumer",
   "main": "dist/commonjs/index.js",
   "typings": "dist/index.d.ts",
