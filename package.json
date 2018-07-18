@@ -19,6 +19,7 @@
   },
   "homepage": "https://github.com/process-engine/consumer_api#readme",
   "dependencies": {
+    "@essential-projects/bootstrapper_contracts": "feature~remove_old_datastore_implementation",
     "@essential-projects/errors_ts": "^1.1.0",
     "@essential-projects/http_node": "^2.0.0",
     "@process-engine/consumer_api_contracts": "^0.12.1",
