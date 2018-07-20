@@ -1,12 +1,9 @@
-import {UnauthorizedError} from '@essential-projects/errors_ts';
 import {BaseRouter} from '@essential-projects/http_node';
 import {restSettings} from '@process-engine/consumer_api_contracts';
 import {ConsumerApiController} from './consumer_api_controller';
 import {resolveCustomerContext} from './middlewares/index';
 
 import {wrap} from 'async-middleware';
-
-import {NextFunction, Request, Response} from 'express';
 
 export class ConsumerApiRouter extends BaseRouter {
 
