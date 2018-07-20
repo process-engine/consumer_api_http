@@ -1,10 +1,10 @@
 import {
   ConsumerContext,
   ConsumerRequest,
+  CorrelationResult,
   EventList,
   EventTriggerPayload,
   IConsumerApiService,
-  ICorrelationResult,
   ProcessModel,
   ProcessModelList,
   ProcessStartRequestPayload,
@@ -73,7 +73,7 @@ export class ConsumerApiController {
     const processModelKey: string = request.params.process_model_key;
     const context: ConsumerContext = request.consumerContext;
 
-    const result: Array<ICorrelationResult> = await this.consumerApiService.getProcessResultForCorrelation(context, correlationId, processModelKey);
+    const result: Array<CorrelationResult> = await this.consumerApiService.getProcessResultForCorrelation(context, correlationId, processModelKey);
 
     response.status(this.httpCodeSuccessfulResponse).json(result);
   }
