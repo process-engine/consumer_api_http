@@ -73,7 +73,7 @@ export class ConsumerApiController {
     const processModelKey: string = request.params.process_model_key;
     const context: ConsumerContext = request.consumerContext;
 
-    const result: ICorrelationResult = await this.consumerApiService.getProcessResultForCorrelation(context, correlationId, processModelKey);
+    const result: Array<ICorrelationResult> = await this.consumerApiService.getProcessResultForCorrelation(context, correlationId, processModelKey);
 
     response.status(this.httpCodeSuccessfulResponse).json(result);
   }
