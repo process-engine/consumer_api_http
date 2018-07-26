@@ -37,7 +37,7 @@ export class ConsumerApiRouter extends BaseRouter {
     const controller: ConsumerApiController = this.consumerApiRestController;
 
     this.router.get(restSettings.paths.processModels, wrap(controller.getProcessModels.bind(controller)));
-    this.router.get(restSettings.paths.processModelByKey, wrap(controller.getProcessModelByKey.bind(controller)));
+    this.router.get(restSettings.paths.processModelById, wrap(controller.getProcessModelById.bind(controller)));
     this.router.get(restSettings.paths.getProcessResultForCorrelation, wrap(controller.getProcessResultForCorrelation.bind(controller)));
     this.router.post(restSettings.paths.startProcessInstance, wrap(controller.startProcessInstance.bind(controller)));
   }
