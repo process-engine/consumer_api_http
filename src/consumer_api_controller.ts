@@ -40,19 +40,19 @@ export class ConsumerApiController {
     response.status(this.httpCodeSuccessfulResponse).json(result);
   }
 
-  public async getProcessModelByKey(request: ConsumerRequest, response: Response): Promise<void> {
-    const processModelKey: string = request.params.process_model_key;
+  public async getProcessModelById(request: ConsumerRequest, response: Response): Promise<void> {
+    const processModelId: string = request.params.process_model_id;
     const context: ConsumerContext = request.consumerContext;
 
-    const result: ProcessModel = await this.consumerApiService.getProcessModelByKey(context, processModelKey);
+    const result: ProcessModel = await this.consumerApiService.getProcessModelById(context, processModelId);
 
     response.status(this.httpCodeSuccessfulResponse).json(result);
   }
 
   public async startProcessInstance(request: ConsumerRequest, response: Response): Promise<void> {
-    const processModelKey: string = request.params.process_model_key;
-    const startEventKey: string = request.params.start_event_key;
-    const endEventKey: string = request.query.end_event_key;
+    const processModelId: string = request.params.process_model_id;
+    const startEventId: string = request.params.start_event_id;
+    const endEventId: string = request.query.end_event_id;
     const payload: ProcessStartRequestPayload = request.body;
     let startCallbackType: StartCallbackType = <StartCallbackType> Number.parseInt(request.query.start_callback_type);
 
@@ -63,27 +63,27 @@ export class ConsumerApiController {
     const context: ConsumerContext = request.consumerContext;
 
     const result: ProcessStartResponsePayload =
-      await this.consumerApiService.startProcessInstance(context, processModelKey, startEventKey, payload, startCallbackType, endEventKey);
+      await this.consumerApiService.startProcessInstance(context, processModelId, startEventId, payload, startCallbackType, endEventId);
 
     response.status(this.httpCodeSuccessfulResponse).json(result);
   }
 
   public async getProcessResultForCorrelation(request: ConsumerRequest, response: Response): Promise<void> {
     const correlationId: string = request.params.correlation_id;
-    const processModelKey: string = request.params.process_model_key;
+    const processModelId: string = request.params.process_model_id;
     const context: ConsumerContext = request.consumerContext;
 
-    const result: Array<CorrelationResult> = await this.consumerApiService.getProcessResultForCorrelation(context, correlationId, processModelKey);
+    const result: Array<CorrelationResult> = await this.consumerApiService.getProcessResultForCorrelation(context, correlationId, processModelId);
 
     response.status(this.httpCodeSuccessfulResponse).json(result);
   }
 
   // event-routes
   public async getEventsForProcessModel(request: ConsumerRequest, response: Response): Promise<void> {
-    const processModelKey: string = request.params.process_model_key;
+    const processModelId: string = request.params.process_model_id;
     const context: ConsumerContext = request.consumerContext;
 
-    const result: EventList = await this.consumerApiService.getEventsForProcessModel(context, processModelKey);
+    const result: EventList = await this.consumerApiService.getEventsForProcessModel(context, processModelId);
 
     response.status(this.httpCodeSuccessfulResponse).json(result);
   }
@@ -98,33 +98,33 @@ export class ConsumerApiController {
   }
 
   public async getEventsForProcessModelInCorrelation(request: ConsumerRequest, response: Response): Promise<void> {
-    const processModelKey: string = request.params.process_model_key;
+    const processModelId: string = request.params.process_model_id;
     const correlationId: string = request.params.correlation_id;
     const context: ConsumerContext = request.consumerContext;
 
-    const result: EventList = await this.consumerApiService.getEventsForProcessModelInCorrelation(context, processModelKey, correlationId);
+    const result: EventList = await this.consumerApiService.getEventsForProcessModelInCorrelation(context, processModelId, correlationId);
 
     response.status(this.httpCodeSuccessfulResponse).json(result);
   }
 
   public async triggerEvent(request: ConsumerRequest, response: Response): Promise<void> {
-    const processModelKey: string = request.params.process_model_key;
+    const processModelId: string = request.params.process_model_id;
     const correlationId: string = request.params.correlation_id;
     const eventId: string = request.params.event_id;
     const eventTriggerPayload: EventTriggerPayload = request.body;
     const context: ConsumerContext = request.consumerContext;
 
-    await this.consumerApiService.triggerEvent(context, processModelKey, correlationId, eventId, eventTriggerPayload);
+    await this.consumerApiService.triggerEvent(context, processModelId, correlationId, eventId, eventTriggerPayload);
 
     response.status(this.httpCodeSuccessfulNoContentResponse).send();
   }
 
   // user-task-routes
   public async getUserTasksForProcessModel(request: ConsumerRequest, response: Response): Promise<void> {
-    const processModelKey: string = request.params.process_model_key;
+    const processModelId: string = request.params.process_model_id;
     const context: ConsumerContext = request.consumerContext;
 
-    const result: UserTaskList = await this.consumerApiService.getUserTasksForProcessModel(context, processModelKey);
+    const result: UserTaskList = await this.consumerApiService.getUserTasksForProcessModel(context, processModelId);
 
     response.status(this.httpCodeSuccessfulResponse).json(result);
   }
@@ -139,23 +139,23 @@ export class ConsumerApiController {
   }
 
   public async getUserTasksForProcessModelInCorrelation(request: ConsumerRequest, response: Response): Promise<void> {
-    const processModelKey: string = request.params.process_model_key;
+    const processModelId: string = request.params.process_model_id;
     const correlationId: string = request.params.correlation_id;
     const context: ConsumerContext = request.consumerContext;
 
-    const result: UserTaskList = await this.consumerApiService.getUserTasksForProcessModelInCorrelation(context, processModelKey, correlationId);
+    const result: UserTaskList = await this.consumerApiService.getUserTasksForProcessModelInCorrelation(context, processModelId, correlationId);
 
     response.status(this.httpCodeSuccessfulResponse).json(result);
   }
 
   public async finishUserTask(request: ConsumerRequest, response: Response): Promise<void> {
-    const processModelKey: string = request.params.process_model_key;
+    const processModelId: string = request.params.process_model_id;
     const correlationId: string = request.params.correlation_id;
     const userTaskId: string = request.params.user_task_id;
     const userTaskResult: UserTaskResult = request.body;
     const context: ConsumerContext = request.consumerContext;
 
-    await this.consumerApiService.finishUserTask(context, processModelKey, correlationId, userTaskId, userTaskResult);
+    await this.consumerApiService.finishUserTask(context, processModelId, correlationId, userTaskId, userTaskResult);
 
     response.status(this.httpCodeSuccessfulNoContentResponse).send();
   }
