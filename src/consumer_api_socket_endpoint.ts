@@ -8,7 +8,6 @@ import {
   UserTaskFinishedMessage,
   UserTaskWaitingMessage,
 } from '@process-engine/process_engine_contracts';
-import '@types/socket.io';
 
 interface IConnection {
   identity: string;
