@@ -4,7 +4,6 @@ import {socketSettings} from '@process-engine/consumer_api_contracts';
 import {
   eventAggregatorSettings,
   ProcessEndedMessage,
-  ProcessTerminatedMessage,
   UserTaskFinishedMessage,
   UserTaskWaitingMessage,
 } from '@process-engine/process_engine_contracts';
@@ -60,7 +59,7 @@ export class ConsumerApiSocketEndpoint extends BaseSocketEndpoint {
     this.eventAggregator.subscribe(eventAggregatorSettings.paths.processEnded, (processEndedMessage: ProcessEndedMessage) => {
       socketIo.emit(socketSettings.paths.processEnded, processEndedMessage);
     });
-    this.eventAggregator.subscribe(eventAggregatorSettings.paths.processTerminated, (processTerminatedMessage: ProcessTerminatedMessage) => {
+    this.eventAggregator.subscribe(eventAggregatorSettings.paths.processTerminated, (processTerminatedMessage: ProcessEndedMessage) => {
       socketIo.emit(socketSettings.paths.processTerminated, processTerminatedMessage);
     });
   }
