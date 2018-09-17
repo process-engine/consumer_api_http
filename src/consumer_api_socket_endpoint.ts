@@ -50,16 +50,16 @@ export class ConsumerApiSocketEndpoint extends BaseSocketEndpoint {
       });
     });
 
-    this.eventAggregator.subscribe(eventAggregatorSettings.paths.userTaskWaiting, (userTaskWaitingMessage: UserTaskWaitingMessage) => {
+    this.eventAggregator.subscribe(eventAggregatorSettings.messagePaths.userTaskWaiting, (userTaskWaitingMessage: UserTaskWaitingMessage) => {
       socketIo.emit(socketSettings.paths.userTaskWaiting, userTaskWaitingMessage);
     });
-    this.eventAggregator.subscribe(eventAggregatorSettings.paths.userTaskFinished, (userTaskFinishedMessage: UserTaskFinishedMessage) => {
+    this.eventAggregator.subscribe(eventAggregatorSettings.messagePaths.userTaskFinished, (userTaskFinishedMessage: UserTaskFinishedMessage) => {
       socketIo.emit(socketSettings.paths.userTaskFinished, userTaskFinishedMessage);
     });
-    this.eventAggregator.subscribe(eventAggregatorSettings.paths.processEnded, (processEndedMessage: ProcessEndedMessage) => {
+    this.eventAggregator.subscribe(eventAggregatorSettings.messagePaths.processEnded, (processEndedMessage: ProcessEndedMessage) => {
       socketIo.emit(socketSettings.paths.processEnded, processEndedMessage);
     });
-    this.eventAggregator.subscribe(eventAggregatorSettings.paths.processTerminated, (processTerminatedMessage: ProcessEndedMessage) => {
+    this.eventAggregator.subscribe(eventAggregatorSettings.messagePaths.processTerminated, (processTerminatedMessage: ProcessEndedMessage) => {
       socketIo.emit(socketSettings.paths.processTerminated, processTerminatedMessage);
     });
   }
