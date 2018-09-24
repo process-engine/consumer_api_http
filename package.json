@@ -24,7 +24,7 @@
     "@essential-projects/http_contracts": "2.1.0",
     "@essential-projects/http_node": "3.0.2",
     "@essential-projects/iam_contracts": "3.1.0",
-    "@process-engine/consumer_api_contracts": "feature~remove_execution_context",
+    "@process-engine/consumer_api_contracts": "0.17.0",
     "addict-ioc": "2.3.7",
     "async-middleware": "1.2.1",
     "bluebird": "3.5.1",
