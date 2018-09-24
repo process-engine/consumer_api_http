@@ -1,1 +1,1 @@
-export * from './resolve_consumer_context';
+export * from './resolve_identity';
