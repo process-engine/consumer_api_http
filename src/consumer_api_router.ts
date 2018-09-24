@@ -1,7 +1,7 @@
 import {BaseRouter} from '@essential-projects/http_node';
 import {restSettings} from '@process-engine/consumer_api_contracts';
 import {ConsumerApiController} from './consumer_api_controller';
-import {resolveCustomerContext} from './middlewares/index';
+import {resolveIdentity} from './middlewares/index';
 
 import {wrap} from 'async-middleware';
 
@@ -30,7 +30,7 @@ export class ConsumerApiRouter extends BaseRouter {
   }
 
   private registerMiddlewares(): void {
-    this.router.use(wrap(resolveCustomerContext));
+    this.router.use(wrap(resolveIdentity));
   }
 
   private registerProcessModelRoutes(): void {
