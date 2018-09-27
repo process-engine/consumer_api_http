@@ -13,16 +13,12 @@ interface IConnection {
 
 export class ConsumerApiSocketEndpoint extends BaseSocketEndpoint {
 
-  private _eventAggregator: IEventAggregator;
   private _connections: Map<string, IConnection> = new Map();
+  private _eventAggregator: IEventAggregator;
 
   constructor(eventAggregator: IEventAggregator) {
     super();
     this._eventAggregator = eventAggregator;
-  }
-
-  private get eventAggregator(): IEventAggregator {
-    return this._eventAggregator;
   }
 
   public get namespace(): string {
@@ -49,22 +45,22 @@ export class ConsumerApiSocketEndpoint extends BaseSocketEndpoint {
       });
     });
 
-    this.eventAggregator.subscribe(Messages.EventAggregatorSettings.messagePaths.userTaskReached,
+    this._eventAggregator.subscribe(Messages.EventAggregatorSettings.messagePaths.userTaskReached,
       (userTaskWaitingMessage: Messages.SystemEvents.UserTaskReachedMessage) => {
         socketIo.emit(socketSettings.paths.userTaskWaiting, userTaskWaitingMessage);
       });
 
-    this.eventAggregator.subscribe(Messages.EventAggregatorSettings.messagePaths.userTaskFinished,
+    this._eventAggregator.subscribe(Messages.EventAggregatorSettings.messagePaths.userTaskFinished,
       (userTaskFinishedMessage: Messages.SystemEvents.UserTaskFinishedMessage) => {
         socketIo.emit(socketSettings.paths.userTaskFinished, userTaskFinishedMessage);
       });
 
-    this.eventAggregator.subscribe(Messages.EventAggregatorSettings.messagePaths.processEnded,
+    this._eventAggregator.subscribe(Messages.EventAggregatorSettings.messagePaths.processEnded,
       (processEndedMessage: Messages.SystemEvents.ProcessEndedMessage) => {
         socketIo.emit(socketSettings.paths.processEnded, processEndedMessage);
       });
 
-    this.eventAggregator.subscribe(Messages.EventAggregatorSettings.messagePaths.processTerminated,
+    this._eventAggregator.subscribe(Messages.EventAggregatorSettings.messagePaths.processTerminated,
       (processTerminatedMessage: Messages.SystemEvents.ProcessEndedMessage) => {
         socketIo.emit(socketSettings.paths.processTerminated, processTerminatedMessage);
       });
