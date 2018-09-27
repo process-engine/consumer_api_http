@@ -1,12 +1,11 @@
-import {IEventAggregator, ISubscription} from '@essential-projects/event_aggregator_contracts';
+import {Logger} from 'loggerhythm';
+
+import {IEventAggregator} from '@essential-projects/event_aggregator_contracts';
 import {BaseSocketEndpoint} from '@essential-projects/http_node';
-import {socketSettings} from '@process-engine/consumer_api_contracts';
-import {
-  eventAggregatorSettings,
-  ProcessEndedMessage,
-  UserTaskFinishedMessage,
-  UserTaskWaitingMessage,
-} from '@process-engine/process_engine_contracts';
+
+import {Messages, socketSettings} from '@process-engine/consumer_api_contracts';
+
+const logger: Logger = Logger.createLogger('consumer_api:http:socket.io_endpoint');
 
 interface IConnection {
   identity: string;
@@ -36,32 +35,39 @@ export class ConsumerApiSocketEndpoint extends BaseSocketEndpoint {
       const identity: string = socket.handshake.headers['authorization'];
 
       const connection: IConnection = {
-        identity,
+        identity: identity,
       };
 
       this._connections.set(socket.id, connection);
 
-      console.log(`Client with socket id "${socket.id} connected."`);
+      logger.info(`Client with socket id "${socket.id} connected."`);
 
       socket.on('disconnect', (reason: any) => {
         this._connections.delete(socket.id);
 
-        console.log(`Client with socket id "${socket.id} disconnected."`);
+        logger.info(`Client with socket id "${socket.id} disconnected."`);
       });
     });
 
-    this.eventAggregator.subscribe(eventAggregatorSettings.messagePaths.userTaskWaiting, (userTaskWaitingMessage: UserTaskWaitingMessage) => {
-      socketIo.emit(socketSettings.paths.userTaskWaiting, userTaskWaitingMessage);
-    });
-    this.eventAggregator.subscribe(eventAggregatorSettings.messagePaths.userTaskFinished, (userTaskFinishedMessage: UserTaskFinishedMessage) => {
-      socketIo.emit(socketSettings.paths.userTaskFinished, userTaskFinishedMessage);
-    });
-    this.eventAggregator.subscribe(eventAggregatorSettings.messagePaths.processEnded, (processEndedMessage: ProcessEndedMessage) => {
-      socketIo.emit(socketSettings.paths.processEnded, processEndedMessage);
-    });
-    this.eventAggregator.subscribe(eventAggregatorSettings.messagePaths.processTerminated, (processTerminatedMessage: ProcessEndedMessage) => {
-      socketIo.emit(socketSettings.paths.processTerminated, processTerminatedMessage);
-    });
+    this.eventAggregator.subscribe(Messages.EventAggregatorSettings.messagePaths.userTaskReached,
+      (userTaskWaitingMessage: Messages.SystemEvents.UserTaskReachedMessage) => {
+        socketIo.emit(socketSettings.paths.userTaskWaiting, userTaskWaitingMessage);
+      });
+
+    this.eventAggregator.subscribe(Messages.EventAggregatorSettings.messagePaths.userTaskFinished,
+      (userTaskFinishedMessage: Messages.SystemEvents.UserTaskFinishedMessage) => {
+        socketIo.emit(socketSettings.paths.userTaskFinished, userTaskFinishedMessage);
+      });
+
+    this.eventAggregator.subscribe(Messages.EventAggregatorSettings.messagePaths.processEnded,
+      (processEndedMessage: Messages.SystemEvents.ProcessEndedMessage) => {
+        socketIo.emit(socketSettings.paths.processEnded, processEndedMessage);
+      });
+
+    this.eventAggregator.subscribe(Messages.EventAggregatorSettings.messagePaths.processTerminated,
+      (processTerminatedMessage: Messages.SystemEvents.ProcessEndedMessage) => {
+        socketIo.emit(socketSettings.paths.processTerminated, processTerminatedMessage);
+      });
   }
 
 }
