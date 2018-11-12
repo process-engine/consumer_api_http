@@ -27,6 +27,7 @@ export class ConsumerApiRouter extends BaseRouter {
     this.registerProcessModelRoutes();
     this.registerEventRoutes();
     this.registerUserTaskRoutes();
+    this.registerManualTaskRoutes();
   }
 
   private registerMiddlewares(): void {
