@@ -48,7 +48,8 @@ export class ConsumerApiRouter extends BaseRouter {
     this.router.get(restSettings.paths.processModelEvents, wrap(controller.getEventsForProcessModel.bind(controller)));
     this.router.get(restSettings.paths.correlationEvents, wrap(controller.getEventsForCorrelation.bind(controller)));
     this.router.get(restSettings.paths.processModelCorrelationEvents, wrap(controller.getEventsForProcessModelInCorrelation.bind(controller)));
-    this.router.post(restSettings.paths.triggerEvent, wrap(controller.triggerEvent.bind(controller)));
+    this.router.post(restSettings.paths.triggerMessageEvent, wrap(controller.triggerMessageEvent.bind(controller)));
+    this.router.post(restSettings.paths.triggerSignalEvent, wrap(controller.triggerSignalEvent.bind(controller)));
   }
 
   private registerUserTaskRoutes(): void {

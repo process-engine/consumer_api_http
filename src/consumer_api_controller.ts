@@ -104,14 +104,22 @@ export class ConsumerApiController {
     response.status(this.httpCodeSuccessfulResponse).json(result);
   }
 
-  public async triggerEvent(request: HttpRequestWithIdentity, response: Response): Promise<void> {
-    const processModelId: string = request.params.process_model_id;
-    const correlationId: string = request.params.correlation_id;
-    const eventId: string = request.params.event_id;
-    const eventTriggerPayload: EventTriggerPayload = request.body;
+  public async triggerMessageEvent(request: HttpRequestWithIdentity, response: Response): Promise<void> {
+    const eventName: string = request.params.event_name;
+    const payload: EventTriggerPayload = request.body;
     const identity: IIdentity = request.identity;
 
-    await this.consumerApiService.triggerEvent(identity, processModelId, correlationId, eventId, eventTriggerPayload);
+    await this.consumerApiService.triggerMessageEvent(identity, eventName, payload);
+
+    response.status(this.httpCodeSuccessfulNoContentResponse).send();
+  }
+
+  public async triggerSignalEvent(request: HttpRequestWithIdentity, response: Response): Promise<void> {
+    const eventName: string = request.params.event_name;
+    const payload: EventTriggerPayload = request.body;
+    const identity: IIdentity = request.identity;
+
+    await this.consumerApiService.triggerSignalEvent(identity, eventName, payload);
 
     response.status(this.httpCodeSuccessfulNoContentResponse).send();
   }
