@@ -196,12 +196,12 @@ export class ConsumerApiController {
   }
 
   public async finishManualTask(request: HttpRequestWithIdentity, response: Response): Promise<void> {
-    const processModelId: string = request.params.process_model_id;
     const correlationId: string = request.params.correlation_id;
-    const manualTaskId: string = request.params.manual_task_id;
     const identity: IIdentity = request.identity;
+    const processInstanceId: string = request.params.process_instance_id;
+    const manualTaskInstanceId: string = request.params.manual_task_instance_id;
 
-    await this.consumerApiService.finishManualTask(identity, processModelId, correlationId, manualTaskId);
+    await this.consumerApiService.finishManualTask(identity, processInstanceId, correlationId, manualTaskInstanceId);
 
     response.status(this.httpCodeSuccessfulNoContentResponse).send();
   }
