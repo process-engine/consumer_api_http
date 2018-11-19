@@ -1,5 +1,6 @@
 import {Logger} from 'loggerhythm';
 
+import {UnauthorizedError} from '@essential-projects/errors_ts';
 import {IEventAggregator} from '@essential-projects/event_aggregator_contracts';
 import {BaseSocketEndpoint} from '@essential-projects/http_node';
 
@@ -33,6 +34,11 @@ export class ConsumerApiSocketEndpoint extends BaseSocketEndpoint {
       const connection: IConnection = {
         identity: identity,
       };
+
+      const identityNotSet: boolean = identity === undefined;
+      if (identityNotSet) {
+        throw new UnauthorizedError('No auth token provided!');
+      }
 
       this._connections.set(socket.id, connection);
 
