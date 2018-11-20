@@ -23,17 +23,18 @@ export class ConsumerApiRouter extends BaseRouter {
   }
 
   public async initializeRouter(): Promise<void> {
-    this.registerMiddlewares();
-    this.registerProcessModelRoutes();
-    this.registerEventRoutes();
-    this.registerUserTaskRoutes();
+    this._registerMiddlewares();
+    this._registerProcessModelRoutes();
+    this._registerEventRoutes();
+    this._registerUserTaskRoutes();
+    this._registerManualTaskRoutes();
   }
 
-  private registerMiddlewares(): void {
+  private _registerMiddlewares(): void {
     this.router.use(wrap(resolveIdentity));
   }
 
-  private registerProcessModelRoutes(): void {
+  private _registerProcessModelRoutes(): void {
     const controller: ConsumerApiController = this.consumerApiRestController;
 
     this.router.get(restSettings.paths.processModels, wrap(controller.getProcessModels.bind(controller)));
@@ -42,7 +43,7 @@ export class ConsumerApiRouter extends BaseRouter {
     this.router.post(restSettings.paths.startProcessInstance, wrap(controller.startProcessInstance.bind(controller)));
   }
 
-  private registerEventRoutes(): void {
+  private _registerEventRoutes(): void {
     const controller: ConsumerApiController = this.consumerApiRestController;
 
     this.router.get(restSettings.paths.processModelEvents, wrap(controller.getEventsForProcessModel.bind(controller)));
@@ -52,12 +53,22 @@ export class ConsumerApiRouter extends BaseRouter {
     this.router.post(restSettings.paths.triggerSignalEvent, wrap(controller.triggerSignalEvent.bind(controller)));
   }
 
-  private registerUserTaskRoutes(): void {
+  private _registerUserTaskRoutes(): void {
     const controller: ConsumerApiController = this.consumerApiRestController;
 
     this.router.get(restSettings.paths.processModelUserTasks, wrap(controller.getUserTasksForProcessModel.bind(controller)));
     this.router.get(restSettings.paths.correlationUserTasks, wrap(controller.getUserTasksForCorrelation.bind(controller)));
     this.router.get(restSettings.paths.processModelCorrelationUserTasks, wrap(controller.getUserTasksForProcessModelInCorrelation.bind(controller)));
     this.router.post(restSettings.paths.finishUserTask, wrap(controller.finishUserTask.bind(controller)));
+  }
+
+  private _registerManualTaskRoutes(): void {
+    const controller: ConsumerApiController = this.consumerApiRestController;
+
+    this.router.get(restSettings.paths.processModelManualTasks, wrap(controller.getManualTasksForProcessModel.bind(controller)));
+    this.router.get(restSettings.paths.correlationManualTasks, wrap(controller.getManualTasksForCorrelation.bind(controller)));
+    this.router.get(restSettings.paths.processModelCorrelationManualTasks,
+       wrap(controller.getManualTasksForProcessModelInCorrelation.bind(controller)));
+    this.router.post(restSettings.paths.finishManualTask, wrap(controller.finishManualTask.bind(controller)));
   }
 }
