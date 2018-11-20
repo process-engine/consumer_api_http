@@ -6,6 +6,7 @@ import {
   EventList,
   EventTriggerPayload,
   IConsumerApi,
+  ManualTaskList,
   ProcessModel,
   ProcessModelList,
   ProcessStartRequestPayload,
@@ -161,6 +162,46 @@ export class ConsumerApiController {
     const userTaskResult: UserTaskResult = request.body;
 
     await this.consumerApiService.finishUserTask(identity, processInstanceId, correlationId, userTaskInstanceId, userTaskResult);
+
+    response.status(this.httpCodeSuccessfulNoContentResponse).send();
+  }
+
+  // manual-task-routes
+  public async getManualTasksForProcessModel(request: HttpRequestWithIdentity, response: Response): Promise<void> {
+    const processModelId: string = request.params.process_model_id;
+    const identity: IIdentity = request.identity;
+
+    const result: ManualTaskList = await this.consumerApiService.getManualTasksForProcessModel(identity, processModelId);
+
+    response.status(this.httpCodeSuccessfulResponse).json(result);
+  }
+
+  public async getManualTasksForCorrelation(request: HttpRequestWithIdentity, response: Response): Promise<void> {
+    const correlationId: string = request.params.correlation_id;
+    const identity: IIdentity = request.identity;
+
+    const result: ManualTaskList = await this.consumerApiService.getManualTasksForCorrelation(identity, correlationId);
+
+    response.status(this.httpCodeSuccessfulResponse).json(result);
+  }
+
+  public async getManualTasksForProcessModelInCorrelation(request: HttpRequestWithIdentity, response: Response): Promise<void> {
+    const processModelId: string = request.params.process_model_id;
+    const correlationId: string = request.params.correlation_id;
+    const identity: IIdentity = request.identity;
+
+    const result: ManualTaskList = await this.consumerApiService.getManualTasksForProcessModelInCorrelation(identity, processModelId, correlationId);
+
+    response.status(this.httpCodeSuccessfulResponse).json(result);
+  }
+
+  public async finishManualTask(request: HttpRequestWithIdentity, response: Response): Promise<void> {
+    const correlationId: string = request.params.correlation_id;
+    const identity: IIdentity = request.identity;
+    const processInstanceId: string = request.params.process_instance_id;
+    const manualTaskInstanceId: string = request.params.manual_task_instance_id;
+
+    await this.consumerApiService.finishManualTask(identity, processInstanceId, correlationId, manualTaskInstanceId);
 
     response.status(this.httpCodeSuccessfulNoContentResponse).send();
   }
