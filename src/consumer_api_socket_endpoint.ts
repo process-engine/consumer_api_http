@@ -71,6 +71,10 @@ export class ConsumerApiSocketEndpoint extends BaseSocketEndpoint {
         socketIo.emit(socketSettings.paths.manualTaskFinished, manualTaskFinishedMessage);
       });
 
+    this._eventAggregator.subscribe(Messages.EventAggregatorSettings.messagePaths.processStarted,
+      (processEndedMessage: Messages.SystemEvents.ProcessEndedMessage) => {
+        socketIo.emit(socketSettings.paths.processStarted, processEndedMessage);
+      });
     this._eventAggregator.subscribe(Messages.EventAggregatorSettings.messagePaths.processEnded,
       (processEndedMessage: Messages.SystemEvents.ProcessEndedMessage) => {
         socketIo.emit(socketSettings.paths.processEnded, processEndedMessage);
