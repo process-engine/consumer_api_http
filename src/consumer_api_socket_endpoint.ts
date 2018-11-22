@@ -72,9 +72,16 @@ export class ConsumerApiSocketEndpoint extends BaseSocketEndpoint {
       });
 
     this._eventAggregator.subscribe(Messages.EventAggregatorSettings.messagePaths.processStarted,
-      (processEndedMessage: Messages.SystemEvents.ProcessEndedMessage) => {
-        socketIo.emit(socketSettings.paths.processStarted, processEndedMessage);
+      (processStartedMessage: Messages.SystemEvents.ProcessStartedMessage) => {
+        socketIo.emit(socketSettings.paths.processStarted, processStartedMessage);
+
+        const processInstanceStartedIdMessage: string =
+          socketSettings.paths.processInstanceStarted.replace(
+            socketSettings.pathParams.processModelId, processStartedMessage.processModelId);
+
+        socketIo.emit(processInstanceStartedIdMessage, processStartedMessage);
       });
+
     this._eventAggregator.subscribe(Messages.EventAggregatorSettings.messagePaths.processEnded,
       (processEndedMessage: Messages.SystemEvents.ProcessEndedMessage) => {
         socketIo.emit(socketSettings.paths.processEnded, processEndedMessage);
@@ -85,5 +92,4 @@ export class ConsumerApiSocketEndpoint extends BaseSocketEndpoint {
         socketIo.emit(socketSettings.paths.processTerminated, processTerminatedMessage);
       });
   }
-
 }
