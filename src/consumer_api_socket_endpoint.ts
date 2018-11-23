@@ -76,8 +76,8 @@ export class ConsumerApiSocketEndpoint extends BaseSocketEndpoint {
         socketIo.emit(socketSettings.paths.processStarted, processStartedMessage);
 
         const processInstanceStartedIdMessage: string =
-          socketSettings.paths.processInstanceStarted.replace(
-            socketSettings.pathParams.processModelId, processStartedMessage.processModelId);
+          socketSettings.paths.processInstanceStarted
+            .replace(socketSettings.pathParams.processModelId, processStartedMessage.processModelId);
 
         socketIo.emit(processInstanceStartedIdMessage, processStartedMessage);
       });
