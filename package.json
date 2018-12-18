@@ -21,7 +21,7 @@
   "dependencies": {
     "@essential-projects/bootstrapper_contracts": "~1.2.0",
     "@essential-projects/errors_ts": "~1.4.0",
-    "@essential-projects/event_aggregator_contracts": "feature~refactor_event_aggregator",
+    "@essential-projects/event_aggregator_contracts": "~4.0.0",
     "@essential-projects/http_contracts": "~2.3.0",
     "@essential-projects/http_node": "~4.1.0",
     "@essential-projects/iam_contracts": "~3.2.0",
