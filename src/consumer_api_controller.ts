@@ -6,6 +6,7 @@ import {
   EventList,
   EventTriggerPayload,
   IConsumerApi,
+  IConsumerApiHttpController,
   ManualTaskList,
   ProcessModel,
   ProcessModelList,
@@ -18,7 +19,7 @@ import {
 
 import {Response} from 'express';
 
-export class ConsumerApiController {
+export class ConsumerApiController implements IConsumerApiHttpController {
   public config: any = undefined;
 
   private httpCodeSuccessfulResponse: number = 200;
