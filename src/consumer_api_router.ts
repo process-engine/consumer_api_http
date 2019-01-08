@@ -71,6 +71,7 @@ export class ConsumerApiRouter extends BaseRouter {
     this.router.get(restSettings.paths.correlationManualTasks, wrap(controller.getManualTasksForCorrelation.bind(controller)));
     this.router.get(restSettings.paths.processModelCorrelationManualTasks,
        wrap(controller.getManualTasksForProcessModelInCorrelation.bind(controller)));
+    this.router.get(restSettings.paths.getOwnManualTasks, wrap(controller.getWaitingManualTasksByIdentity.bind(controller)));
     this.router.post(restSettings.paths.finishManualTask, wrap(controller.finishManualTask.bind(controller)));
   }
 }

@@ -213,6 +213,14 @@ export class ConsumerApiController implements IConsumerApiHttpController {
     response.status(this.httpCodeSuccessfulResponse).json(result);
   }
 
+  public async getWaitingManualTasksByIdentity(request: HttpRequestWithIdentity, response: Response): Promise<void> {
+    const identity: IIdentity = request.identity;
+
+    const result: ManualTaskList = await this.consumerApiService.getWaitingManualTasksByIdentity(identity);
+
+    response.status(this.httpCodeSuccessfulResponse).json(result);
+  }
+
   public async finishManualTask(request: HttpRequestWithIdentity, response: Response): Promise<void> {
     const correlationId: string = request.params.correlation_id;
     const identity: IIdentity = request.identity;
