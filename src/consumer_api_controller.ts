@@ -8,6 +8,7 @@ import {
   IConsumerApi,
   IConsumerApiHttpController,
   ManualTaskList,
+  ProcessInstance,
   ProcessModel,
   ProcessModelList,
   ProcessStartRequestPayload,
@@ -73,6 +74,14 @@ export class ConsumerApiController implements IConsumerApiHttpController {
     const identity: IIdentity = request.identity;
 
     const result: Array<CorrelationResult> = await this.consumerApiService.getProcessResultForCorrelation(identity, correlationId, processModelId);
+
+    response.status(this.httpCodeSuccessfulResponse).json(result);
+  }
+
+  public async getProcessInstancesByIdentity(request: HttpRequestWithIdentity, response: Response): Promise<void> {
+    const identity: IIdentity = request.identity;
+
+    const result: Array<ProcessInstance> = await this.consumerApiService.getProcessInstancesByIdentity(identity);
 
     response.status(this.httpCodeSuccessfulResponse).json(result);
   }
@@ -151,6 +160,14 @@ export class ConsumerApiController implements IConsumerApiHttpController {
     const identity: IIdentity = request.identity;
 
     const result: UserTaskList = await this.consumerApiService.getUserTasksForProcessModelInCorrelation(identity, processModelId, correlationId);
+
+    response.status(this.httpCodeSuccessfulResponse).json(result);
+  }
+
+  public async getWaitingUserTasksByIdentity(request: HttpRequestWithIdentity, response: Response): Promise<void> {
+    const identity: IIdentity = request.identity;
+
+    const result: UserTaskList = await this.consumerApiService.getWaitingUserTasksByIdentity(identity);
 
     response.status(this.httpCodeSuccessfulResponse).json(result);
   }
