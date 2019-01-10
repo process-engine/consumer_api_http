@@ -67,7 +67,7 @@ export class ConsumerApiSocketEndpoint extends BaseSocketEndpoint {
       // We can just pass on the received message, because the ConsumerApiService
       // will already have ensured that the identites match.
       this._consumerApiService.onUserTaskForIdentityWaiting(connection.identity,
-        (message: Messages.Internal.SystemEvents.UserTaskReachedMessage) => {
+        (message: Messages.Public.SystemEvents.UserTaskReachedMessage) => {
 
           const eventToPublish: string = socketSettings.paths.userTaskForIdentityWaiting
             .replace(socketSettings.pathParams.userId, connection.userId);
@@ -76,7 +76,7 @@ export class ConsumerApiSocketEndpoint extends BaseSocketEndpoint {
         });
 
       this._consumerApiService.onUserTaskForIdentityFinished(connection.identity,
-        (message: Messages.Internal.SystemEvents.UserTaskReachedMessage) => {
+        (message: Messages.Public.SystemEvents.UserTaskReachedMessage) => {
 
           const eventToPublish: string = socketSettings.paths.userTaskForIdentityFinished
             .replace(socketSettings.pathParams.userId, connection.userId);
@@ -85,7 +85,7 @@ export class ConsumerApiSocketEndpoint extends BaseSocketEndpoint {
         });
 
       this._consumerApiService.onManualTaskForIdentityWaiting(connection.identity,
-        (message: Messages.Internal.SystemEvents.UserTaskReachedMessage) => {
+        (message: Messages.Public.SystemEvents.UserTaskReachedMessage) => {
 
           const eventToPublish: string = socketSettings.paths.manualTaskForIdentityWaiting
             .replace(socketSettings.pathParams.userId, connection.userId);
@@ -94,7 +94,7 @@ export class ConsumerApiSocketEndpoint extends BaseSocketEndpoint {
         });
 
       this._consumerApiService.onManualTaskForIdentityFinished(connection.identity,
-        (message: Messages.Internal.SystemEvents.UserTaskReachedMessage) => {
+        (message: Messages.Public.SystemEvents.UserTaskReachedMessage) => {
 
           const eventToPublish: string = socketSettings.paths.manualTaskForIdentityFinished
             .replace(socketSettings.pathParams.userId, connection.userId);
@@ -105,27 +105,27 @@ export class ConsumerApiSocketEndpoint extends BaseSocketEndpoint {
 
     // Global notifications
     this._eventAggregator.subscribe(Messages.EventAggregatorSettings.messagePaths.userTaskReached,
-      (userTaskWaitingMessage: Messages.Internal.SystemEvents.UserTaskReachedMessage) => {
+      (userTaskWaitingMessage: Messages.Public.SystemEvents.UserTaskReachedMessage) => {
         socketIo.emit(socketSettings.paths.userTaskWaiting, userTaskWaitingMessage);
       });
 
     this._eventAggregator.subscribe(Messages.EventAggregatorSettings.messagePaths.userTaskFinished,
-      (userTaskFinishedMessage: Messages.Internal.SystemEvents.UserTaskFinishedMessage) => {
+      (userTaskFinishedMessage: Messages.Public.SystemEvents.UserTaskFinishedMessage) => {
         socketIo.emit(socketSettings.paths.userTaskFinished, userTaskFinishedMessage);
       });
 
     this._eventAggregator.subscribe(Messages.EventAggregatorSettings.messagePaths.manualTaskReached,
-      (manualTaskWaitingMessage: Messages.Internal.SystemEvents.ManualTaskReachedMessage) => {
+      (manualTaskWaitingMessage: Messages.Public.SystemEvents.ManualTaskReachedMessage) => {
         socketIo.emit(socketSettings.paths.manualTaskWaiting, manualTaskWaitingMessage);
       });
 
     this._eventAggregator.subscribe(Messages.EventAggregatorSettings.messagePaths.manualTaskFinished,
-      (manualTaskFinishedMessage: Messages.Internal.SystemEvents.ManualTaskFinishedMessage) => {
+      (manualTaskFinishedMessage: Messages.Public.SystemEvents.ManualTaskFinishedMessage) => {
         socketIo.emit(socketSettings.paths.manualTaskFinished, manualTaskFinishedMessage);
       });
 
     this._eventAggregator.subscribe(Messages.EventAggregatorSettings.messagePaths.processStarted,
-      (processStartedMessage: Messages.Internal.SystemEvents.ProcessStartedMessage) => {
+      (processStartedMessage: Messages.Public.SystemEvents.ProcessStartedMessage) => {
         socketIo.emit(socketSettings.paths.processStarted, processStartedMessage);
 
         const processInstanceStartedIdMessage: string =
@@ -136,12 +136,12 @@ export class ConsumerApiSocketEndpoint extends BaseSocketEndpoint {
       });
 
     this._eventAggregator.subscribe(Messages.EventAggregatorSettings.messagePaths.processEnded,
-      (processEndedMessage: Messages.Internal.BpmnEvents.EndEventReachedMessage) => {
+      (processEndedMessage: Messages.Public.BpmnEvents.EndEventReachedMessage) => {
         socketIo.emit(socketSettings.paths.processEnded, processEndedMessage);
       });
 
     this._eventAggregator.subscribe(Messages.EventAggregatorSettings.messagePaths.processTerminated,
-      (processTerminatedMessage: Messages.Internal.BpmnEvents.TerminateEndEventReachedMessage) => {
+      (processTerminatedMessage: Messages.Public.BpmnEvents.TerminateEndEventReachedMessage) => {
         socketIo.emit(socketSettings.paths.processTerminated, processTerminatedMessage);
       });
   }
