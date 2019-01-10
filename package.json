@@ -24,9 +24,10 @@
     "@essential-projects/event_aggregator_contracts": "~4.0.0",
     "@essential-projects/http_contracts": "~2.3.0",
     "@essential-projects/http_node": "~4.1.0",
-    "@essential-projects/iam_contracts": "feature~get_instances_by_owner_id",
+    "@essential-projects/iam_contracts": "~3.3.0",
     "@process-engine/consumer_api_contracts": "feature~get_instances_by_owner_id",
     "async-middleware": "1.2.1",
+    "jsonwebtoken": "~8.4.0",
     "loggerhythm": "3.0.3"
   },
   "devDependencies": {
