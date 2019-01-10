@@ -6,7 +6,9 @@ import {
   EventList,
   EventTriggerPayload,
   IConsumerApi,
+  IConsumerApiHttpController,
   ManualTaskList,
+  ProcessInstance,
   ProcessModel,
   ProcessModelList,
   ProcessStartRequestPayload,
@@ -18,7 +20,7 @@ import {
 
 import {Response} from 'express';
 
-export class ConsumerApiController {
+export class ConsumerApiController implements IConsumerApiHttpController {
   public config: any = undefined;
 
   private httpCodeSuccessfulResponse: number = 200;
@@ -72,6 +74,14 @@ export class ConsumerApiController {
     const identity: IIdentity = request.identity;
 
     const result: Array<CorrelationResult> = await this.consumerApiService.getProcessResultForCorrelation(identity, correlationId, processModelId);
+
+    response.status(this.httpCodeSuccessfulResponse).json(result);
+  }
+
+  public async getProcessInstancesByIdentity(request: HttpRequestWithIdentity, response: Response): Promise<void> {
+    const identity: IIdentity = request.identity;
+
+    const result: Array<ProcessInstance> = await this.consumerApiService.getProcessInstancesByIdentity(identity);
 
     response.status(this.httpCodeSuccessfulResponse).json(result);
   }
@@ -154,6 +164,14 @@ export class ConsumerApiController {
     response.status(this.httpCodeSuccessfulResponse).json(result);
   }
 
+  public async getWaitingUserTasksByIdentity(request: HttpRequestWithIdentity, response: Response): Promise<void> {
+    const identity: IIdentity = request.identity;
+
+    const result: UserTaskList = await this.consumerApiService.getWaitingUserTasksByIdentity(identity);
+
+    response.status(this.httpCodeSuccessfulResponse).json(result);
+  }
+
   public async finishUserTask(request: HttpRequestWithIdentity, response: Response): Promise<void> {
     const identity: IIdentity = request.identity;
     const processInstanceId: string = request.params.process_instance_id;
@@ -191,6 +209,14 @@ export class ConsumerApiController {
     const identity: IIdentity = request.identity;
 
     const result: ManualTaskList = await this.consumerApiService.getManualTasksForProcessModelInCorrelation(identity, processModelId, correlationId);
+
+    response.status(this.httpCodeSuccessfulResponse).json(result);
+  }
+
+  public async getWaitingManualTasksByIdentity(request: HttpRequestWithIdentity, response: Response): Promise<void> {
+    const identity: IIdentity = request.identity;
+
+    const result: ManualTaskList = await this.consumerApiService.getWaitingManualTasksByIdentity(identity);
 
     response.status(this.httpCodeSuccessfulResponse).json(result);
   }
