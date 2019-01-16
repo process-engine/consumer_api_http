@@ -1,22 +1,7 @@
 import {HttpRequestWithIdentity} from '@essential-projects/http_contracts';
 import {IIdentity} from '@essential-projects/iam_contracts';
 
-import {
-  CorrelationResult,
-  EventList,
-  EventTriggerPayload,
-  IConsumerApi,
-  IConsumerApiHttpController,
-  ManualTaskList,
-  ProcessInstance,
-  ProcessModel,
-  ProcessModelList,
-  ProcessStartRequestPayload,
-  ProcessStartResponsePayload,
-  StartCallbackType,
-  UserTaskList,
-  UserTaskResult,
-} from '@process-engine/consumer_api_contracts';
+import {DataModels, IConsumerApi, IConsumerApiHttpController} from '@process-engine/consumer_api_contracts';
 
 import {Response} from 'express';
 
@@ -35,7 +20,7 @@ export class ConsumerApiController implements IConsumerApiHttpController {
   public async getProcessModels(request: HttpRequestWithIdentity, response: Response): Promise<void> {
     const identity: IIdentity = request.identity;
 
-    const result: ProcessModelList = await this.consumerApiService.getProcessModels(identity);
+    const result: DataModels.ProcessModels.ProcessModelList = await this.consumerApiService.getProcessModels(identity);
 
     response.status(this.httpCodeSuccessfulResponse).json(result);
   }
@@ -44,7 +29,7 @@ export class ConsumerApiController implements IConsumerApiHttpController {
     const processModelId: string = request.params.process_model_id;
     const identity: IIdentity = request.identity;
 
-    const result: ProcessModel = await this.consumerApiService.getProcessModelById(identity, processModelId);
+    const result: DataModels.ProcessModels.ProcessModel = await this.consumerApiService.getProcessModelById(identity, processModelId);
 
     response.status(this.httpCodeSuccessfulResponse).json(result);
   }
@@ -53,16 +38,17 @@ export class ConsumerApiController implements IConsumerApiHttpController {
     const processModelId: string = request.params.process_model_id;
     const startEventId: string = request.params.start_event_id;
     const endEventId: string = request.query.end_event_id;
-    const payload: ProcessStartRequestPayload = request.body;
-    let startCallbackType: StartCallbackType = <StartCallbackType> Number.parseInt(request.query.start_callback_type);
+    const payload: DataModels.ProcessModels.ProcessStartRequestPayload = request.body;
+    let startCallbackType: DataModels.ProcessModels.StartCallbackType =
+      <DataModels.ProcessModels.StartCallbackType> Number.parseInt(request.query.start_callback_type);
 
     if (!startCallbackType) {
-      startCallbackType = StartCallbackType.CallbackOnProcessInstanceCreated;
+      startCallbackType = DataModels.ProcessModels.StartCallbackType.CallbackOnProcessInstanceCreated;
     }
 
     const identity: IIdentity = request.identity;
 
-    const result: ProcessStartResponsePayload =
+    const result: DataModels.ProcessModels.ProcessStartResponsePayload =
       await this.consumerApiService.startProcessInstance(identity, processModelId, startEventId, payload, startCallbackType, endEventId);
 
     response.status(this.httpCodeSuccessfulResponse).json(result);
@@ -73,7 +59,8 @@ export class ConsumerApiController implements IConsumerApiHttpController {
     const processModelId: string = request.params.process_model_id;
     const identity: IIdentity = request.identity;
 
-    const result: Array<CorrelationResult> = await this.consumerApiService.getProcessResultForCorrelation(identity, correlationId, processModelId);
+    const result: Array<DataModels.CorrelationResult> =
+      await this.consumerApiService.getProcessResultForCorrelation(identity, correlationId, processModelId);
 
     response.status(this.httpCodeSuccessfulResponse).json(result);
   }
@@ -81,7 +68,7 @@ export class ConsumerApiController implements IConsumerApiHttpController {
   public async getProcessInstancesByIdentity(request: HttpRequestWithIdentity, response: Response): Promise<void> {
     const identity: IIdentity = request.identity;
 
-    const result: Array<ProcessInstance> = await this.consumerApiService.getProcessInstancesByIdentity(identity);
+    const result: Array<DataModels.ProcessInstance> = await this.consumerApiService.getProcessInstancesByIdentity(identity);
 
     response.status(this.httpCodeSuccessfulResponse).json(result);
   }
@@ -91,7 +78,7 @@ export class ConsumerApiController implements IConsumerApiHttpController {
     const processModelId: string = request.params.process_model_id;
     const identity: IIdentity = request.identity;
 
-    const result: EventList = await this.consumerApiService.getEventsForProcessModel(identity, processModelId);
+    const result: DataModels.Events.EventList = await this.consumerApiService.getEventsForProcessModel(identity, processModelId);
 
     response.status(this.httpCodeSuccessfulResponse).json(result);
   }
@@ -100,7 +87,7 @@ export class ConsumerApiController implements IConsumerApiHttpController {
     const correlationId: string = request.params.correlation_id;
     const identity: IIdentity = request.identity;
 
-    const result: EventList = await this.consumerApiService.getEventsForCorrelation(identity, correlationId);
+    const result: DataModels.Events.EventList = await this.consumerApiService.getEventsForCorrelation(identity, correlationId);
 
     response.status(this.httpCodeSuccessfulResponse).json(result);
   }
@@ -110,14 +97,15 @@ export class ConsumerApiController implements IConsumerApiHttpController {
     const correlationId: string = request.params.correlation_id;
     const identity: IIdentity = request.identity;
 
-    const result: EventList = await this.consumerApiService.getEventsForProcessModelInCorrelation(identity, processModelId, correlationId);
+    const result: DataModels.Events.EventList =
+      await this.consumerApiService.getEventsForProcessModelInCorrelation(identity, processModelId, correlationId);
 
     response.status(this.httpCodeSuccessfulResponse).json(result);
   }
 
   public async triggerMessageEvent(request: HttpRequestWithIdentity, response: Response): Promise<void> {
     const eventName: string = request.params.event_name;
-    const payload: EventTriggerPayload = request.body;
+    const payload: DataModels.Events.EventTriggerPayload = request.body;
     const identity: IIdentity = request.identity;
 
     await this.consumerApiService.triggerMessageEvent(identity, eventName, payload);
@@ -127,7 +115,7 @@ export class ConsumerApiController implements IConsumerApiHttpController {
 
   public async triggerSignalEvent(request: HttpRequestWithIdentity, response: Response): Promise<void> {
     const eventName: string = request.params.event_name;
-    const payload: EventTriggerPayload = request.body;
+    const payload: DataModels.Events.EventTriggerPayload = request.body;
     const identity: IIdentity = request.identity;
 
     await this.consumerApiService.triggerSignalEvent(identity, eventName, payload);
@@ -140,7 +128,7 @@ export class ConsumerApiController implements IConsumerApiHttpController {
     const processModelId: string = request.params.process_model_id;
     const identity: IIdentity = request.identity;
 
-    const result: UserTaskList = await this.consumerApiService.getUserTasksForProcessModel(identity, processModelId);
+    const result: DataModels.UserTasks.UserTaskList = await this.consumerApiService.getUserTasksForProcessModel(identity, processModelId);
 
     response.status(this.httpCodeSuccessfulResponse).json(result);
   }
@@ -149,7 +137,7 @@ export class ConsumerApiController implements IConsumerApiHttpController {
     const correlationId: string = request.params.correlation_id;
     const identity: IIdentity = request.identity;
 
-    const result: UserTaskList = await this.consumerApiService.getUserTasksForCorrelation(identity, correlationId);
+    const result: DataModels.UserTasks.UserTaskList = await this.consumerApiService.getUserTasksForCorrelation(identity, correlationId);
 
     response.status(this.httpCodeSuccessfulResponse).json(result);
   }
@@ -159,7 +147,8 @@ export class ConsumerApiController implements IConsumerApiHttpController {
     const correlationId: string = request.params.correlation_id;
     const identity: IIdentity = request.identity;
 
-    const result: UserTaskList = await this.consumerApiService.getUserTasksForProcessModelInCorrelation(identity, processModelId, correlationId);
+    const result: DataModels.UserTasks.UserTaskList =
+      await this.consumerApiService.getUserTasksForProcessModelInCorrelation(identity, processModelId, correlationId);
 
     response.status(this.httpCodeSuccessfulResponse).json(result);
   }
@@ -167,7 +156,7 @@ export class ConsumerApiController implements IConsumerApiHttpController {
   public async getWaitingUserTasksByIdentity(request: HttpRequestWithIdentity, response: Response): Promise<void> {
     const identity: IIdentity = request.identity;
 
-    const result: UserTaskList = await this.consumerApiService.getWaitingUserTasksByIdentity(identity);
+    const result: DataModels.UserTasks.UserTaskList = await this.consumerApiService.getWaitingUserTasksByIdentity(identity);
 
     response.status(this.httpCodeSuccessfulResponse).json(result);
   }
@@ -177,7 +166,7 @@ export class ConsumerApiController implements IConsumerApiHttpController {
     const processInstanceId: string = request.params.process_instance_id;
     const correlationId: string = request.params.correlation_id;
     const userTaskInstanceId: string = request.params.user_task_instance_id;
-    const userTaskResult: UserTaskResult = request.body;
+    const userTaskResult: DataModels.UserTasks.UserTaskResult = request.body;
 
     await this.consumerApiService.finishUserTask(identity, processInstanceId, correlationId, userTaskInstanceId, userTaskResult);
 
@@ -189,7 +178,7 @@ export class ConsumerApiController implements IConsumerApiHttpController {
     const processModelId: string = request.params.process_model_id;
     const identity: IIdentity = request.identity;
 
-    const result: ManualTaskList = await this.consumerApiService.getManualTasksForProcessModel(identity, processModelId);
+    const result: DataModels.ManualTasks.ManualTaskList = await this.consumerApiService.getManualTasksForProcessModel(identity, processModelId);
 
     response.status(this.httpCodeSuccessfulResponse).json(result);
   }
@@ -198,7 +187,7 @@ export class ConsumerApiController implements IConsumerApiHttpController {
     const correlationId: string = request.params.correlation_id;
     const identity: IIdentity = request.identity;
 
-    const result: ManualTaskList = await this.consumerApiService.getManualTasksForCorrelation(identity, correlationId);
+    const result: DataModels.ManualTasks.ManualTaskList = await this.consumerApiService.getManualTasksForCorrelation(identity, correlationId);
 
     response.status(this.httpCodeSuccessfulResponse).json(result);
   }
@@ -208,7 +197,8 @@ export class ConsumerApiController implements IConsumerApiHttpController {
     const correlationId: string = request.params.correlation_id;
     const identity: IIdentity = request.identity;
 
-    const result: ManualTaskList = await this.consumerApiService.getManualTasksForProcessModelInCorrelation(identity, processModelId, correlationId);
+    const result: DataModels.ManualTasks.ManualTaskList =
+      await this.consumerApiService.getManualTasksForProcessModelInCorrelation(identity, processModelId, correlationId);
 
     response.status(this.httpCodeSuccessfulResponse).json(result);
   }
@@ -216,7 +206,7 @@ export class ConsumerApiController implements IConsumerApiHttpController {
   public async getWaitingManualTasksByIdentity(request: HttpRequestWithIdentity, response: Response): Promise<void> {
     const identity: IIdentity = request.identity;
 
-    const result: ManualTaskList = await this.consumerApiService.getWaitingManualTasksByIdentity(identity);
+    const result: DataModels.ManualTasks.ManualTaskList = await this.consumerApiService.getWaitingManualTasksByIdentity(identity);
 
     response.status(this.httpCodeSuccessfulResponse).json(result);
   }
