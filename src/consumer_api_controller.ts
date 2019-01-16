@@ -34,6 +34,16 @@ export class ConsumerApiController implements IConsumerApiHttpController {
     response.status(this.httpCodeSuccessfulResponse).json(result);
   }
 
+  public async getProcessModelByProcessInstanceId(request: HttpRequestWithIdentity, response: Response): Promise<void> {
+    const processInstanceId: string = request.params.process_instance_id;
+    const identity: IIdentity = request.identity;
+
+    const result: DataModels.ProcessModels.ProcessModel = await this.consumerApiService
+                                                                    .getProcessModelByProcessInstanceId(identity, processInstanceId);
+
+    response.status(this.httpCodeSuccessfulResponse).json(result);
+  }
+
   public async startProcessInstance(request: HttpRequestWithIdentity, response: Response): Promise<void> {
     const processModelId: string = request.params.process_model_id;
     const startEventId: string = request.params.start_event_id;
