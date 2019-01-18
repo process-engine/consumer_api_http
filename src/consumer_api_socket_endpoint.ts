@@ -11,7 +11,6 @@ import {IConsumerApi, Messages, socketSettings} from '@process-engine/consumer_a
 const logger: Logger = Logger.createLogger('consumer_api:http:socket.io_endpoint');
 
 interface IConnection {
-  userId: string;
   identity: IIdentity;
 }
 
@@ -41,16 +40,16 @@ export class ConsumerApiSocketEndpoint extends BaseSocketEndpoint {
         throw new UnauthorizedError('No auth token provided!');
       }
 
+      const decodedIdentity: TokenBody = <TokenBody> jsonwebtoken.decode(token);
+      const userId: string = decodedIdentity.sub;
+
       const identity: IIdentity = {
         token: token,
+        userId: userId,
       };
-
-      const decodedIdentity: TokenBody = <TokenBody> jsonwebtoken.decode(identity.token);
-      const userId: string = decodedIdentity.sub;
 
       const connection: IConnection = {
         identity: identity,
-        userId: userId,
       };
 
       this._connections.set(socket.id, connection);
@@ -70,7 +69,7 @@ export class ConsumerApiSocketEndpoint extends BaseSocketEndpoint {
         (message: Messages.Public.SystemEvents.UserTaskReachedMessage) => {
 
           const eventToPublish: string = socketSettings.paths.userTaskForIdentityWaiting
-            .replace(socketSettings.pathParams.userId, connection.userId);
+            .replace(socketSettings.pathParams.userId, connection.identity.userId);
 
           socketIo.emit(eventToPublish, message);
         });
@@ -79,7 +78,7 @@ export class ConsumerApiSocketEndpoint extends BaseSocketEndpoint {
         (message: Messages.Public.SystemEvents.UserTaskReachedMessage) => {
 
           const eventToPublish: string = socketSettings.paths.userTaskForIdentityFinished
-            .replace(socketSettings.pathParams.userId, connection.userId);
+            .replace(socketSettings.pathParams.userId, connection.identity.userId);
 
           socketIo.emit(eventToPublish, message);
         });
@@ -88,7 +87,7 @@ export class ConsumerApiSocketEndpoint extends BaseSocketEndpoint {
         (message: Messages.Public.SystemEvents.UserTaskReachedMessage) => {
 
           const eventToPublish: string = socketSettings.paths.manualTaskForIdentityWaiting
-            .replace(socketSettings.pathParams.userId, connection.userId);
+            .replace(socketSettings.pathParams.userId, connection.identity.userId);
 
           socketIo.emit(eventToPublish, message);
         });
@@ -97,7 +96,7 @@ export class ConsumerApiSocketEndpoint extends BaseSocketEndpoint {
         (message: Messages.Public.SystemEvents.UserTaskReachedMessage) => {
 
           const eventToPublish: string = socketSettings.paths.manualTaskForIdentityFinished
-            .replace(socketSettings.pathParams.userId, connection.userId);
+            .replace(socketSettings.pathParams.userId, connection.identity.userId);
 
           socketIo.emit(eventToPublish, message);
         });
