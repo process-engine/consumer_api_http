@@ -27,7 +27,6 @@
     "@essential-projects/iam_contracts": "~3.4.0",
     "@process-engine/consumer_api_contracts": "feature~refactor_socket_io_handling",
     "async-middleware": "~1.2.1",
-    "jsonwebtoken": "~8.4.0",
     "loggerhythm": "^3.0.3",
     "socket.io": "~2.2.0"
   },
