@@ -40,6 +40,7 @@ export class ConsumerApiSocketEndpoint extends BaseSocketEndpoint {
 
       const identityNotSet: boolean = token === undefined;
       if (identityNotSet) {
+        logger.error('A Socket.IO client attempted to connect without providing an Auth-Token!');
         socket.disconnect();
         throw new UnauthorizedError('No auth token provided!');
       }
