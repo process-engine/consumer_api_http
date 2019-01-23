@@ -13,8 +13,6 @@ type UserSubscriptionDictionary = {[userId: string]: Array<Subscription>};
 
 export class ConsumerApiSocketEndpoint extends BaseSocketEndpoint {
 
-  private _connections: Map<string, IIdentity> = new Map();
-
   private _consumerApiService: IConsumerApi;
   private _eventAggregator: IEventAggregator;
   private _identityService: IIdentityService;
@@ -41,21 +39,20 @@ export class ConsumerApiSocketEndpoint extends BaseSocketEndpoint {
       const identityNotSet: boolean = token === undefined;
       if (identityNotSet) {
         logger.error('A Socket.IO client attempted to connect without providing an Auth-Token!');
-        socket.disconnect();
-        throw new UnauthorizedError('No auth token provided!');
+
+        const unauthorizedError: UnauthorizedError = new UnauthorizedError('No auth token provided!');
+        socket.emit('error', unauthorizedError);
+        socket.disconnect(true);
+
+        return;
       }
 
       const identity: IIdentity = await this._identityService.getIdentity(token);
 
-      this._connections.set(socket.id, identity);
-
       logger.info(`Client with socket id "${socket.id} connected."`);
 
       socket.on('disconnect', async(reason: any) => {
-        this._connections.delete(socket.id);
-
         await this._clearUserScopeNotifications(identity);
-
         logger.info(`Client with socket id "${socket.id} disconnected."`);
       });
 
