@@ -1,21 +1,21 @@
 import {BaseRouter} from '@essential-projects/http_node';
+import {IIdentityService} from '@essential-projects/iam_contracts';
+
 import {restSettings} from '@process-engine/consumer_api_contracts';
 import {ConsumerApiController} from './consumer_api_controller';
-import {resolveIdentity} from './middlewares/index';
+import {createResolveIdentityMiddleware, MiddlewareFunction} from './middlewares/index';
 
 import {wrap} from 'async-middleware';
 
 export class ConsumerApiRouter extends BaseRouter {
 
   private _consumerApiRestController: ConsumerApiController;
+  private _identityService: IIdentityService;
 
-  constructor(consumerApiRestController: ConsumerApiController) {
+  constructor(consumerApiRestController: ConsumerApiController, identityService: IIdentityService) {
     super();
     this._consumerApiRestController = consumerApiRestController;
-  }
-
-  private get consumerApiRestController(): ConsumerApiController {
-    return this._consumerApiRestController;
+    this._identityService = identityService;
   }
 
   public get baseRoute(): string {
@@ -31,11 +31,12 @@ export class ConsumerApiRouter extends BaseRouter {
   }
 
   private _registerMiddlewares(): void {
+    const resolveIdentity: MiddlewareFunction = createResolveIdentityMiddleware(this._identityService);
     this.router.use(wrap(resolveIdentity));
   }
 
   private _registerProcessModelRoutes(): void {
-    const controller: ConsumerApiController = this.consumerApiRestController;
+    const controller: ConsumerApiController = this._consumerApiRestController;
 
     this.router.get(restSettings.paths.processModels, wrap(controller.getProcessModels.bind(controller)));
     this.router.get(restSettings.paths.processModelById, wrap(controller.getProcessModelById.bind(controller)));
@@ -45,7 +46,7 @@ export class ConsumerApiRouter extends BaseRouter {
   }
 
   private _registerEventRoutes(): void {
-    const controller: ConsumerApiController = this.consumerApiRestController;
+    const controller: ConsumerApiController = this._consumerApiRestController;
 
     this.router.get(restSettings.paths.processModelEvents, wrap(controller.getEventsForProcessModel.bind(controller)));
     this.router.get(restSettings.paths.correlationEvents, wrap(controller.getEventsForCorrelation.bind(controller)));
@@ -55,7 +56,7 @@ export class ConsumerApiRouter extends BaseRouter {
   }
 
   private _registerUserTaskRoutes(): void {
-    const controller: ConsumerApiController = this.consumerApiRestController;
+    const controller: ConsumerApiController = this._consumerApiRestController;
 
     this.router.get(restSettings.paths.processModelUserTasks, wrap(controller.getUserTasksForProcessModel.bind(controller)));
     this.router.get(restSettings.paths.correlationUserTasks, wrap(controller.getUserTasksForCorrelation.bind(controller)));
@@ -65,7 +66,7 @@ export class ConsumerApiRouter extends BaseRouter {
   }
 
   private _registerManualTaskRoutes(): void {
-    const controller: ConsumerApiController = this.consumerApiRestController;
+    const controller: ConsumerApiController = this._consumerApiRestController;
 
     this.router.get(restSettings.paths.processModelManualTasks, wrap(controller.getManualTasksForProcessModel.bind(controller)));
     this.router.get(restSettings.paths.correlationManualTasks, wrap(controller.getManualTasksForCorrelation.bind(controller)));
