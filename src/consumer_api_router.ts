@@ -60,6 +60,7 @@ export class ConsumerApiRouter extends BaseRouter {
     const controller: ConsumerApiController = this._consumerApiRestController;
 
     this.router.get(restSettings.paths.processModelUserTasks, wrap(controller.getUserTasksForProcessModel.bind(controller)));
+    this.router.get(restSettings.paths.processInstanceUserTasks, wrap(controller.getUserTasksForProcessInstance.bind(controller)));
     this.router.get(restSettings.paths.correlationUserTasks, wrap(controller.getUserTasksForCorrelation.bind(controller)));
     this.router.get(restSettings.paths.processModelCorrelationUserTasks, wrap(controller.getUserTasksForProcessModelInCorrelation.bind(controller)));
     this.router.get(restSettings.paths.getOwnUserTasks, wrap(controller.getWaitingUserTasksByIdentity.bind(controller)));
@@ -70,6 +71,7 @@ export class ConsumerApiRouter extends BaseRouter {
     const controller: ConsumerApiController = this._consumerApiRestController;
 
     this.router.get(restSettings.paths.processModelManualTasks, wrap(controller.getManualTasksForProcessModel.bind(controller)));
+    this.router.get(restSettings.paths.processInstanceManualTasks, wrap(controller.getManualTasksForProcessInstance.bind(controller)));
     this.router.get(restSettings.paths.correlationManualTasks, wrap(controller.getManualTasksForCorrelation.bind(controller)));
     this.router.get(restSettings.paths.processModelCorrelationManualTasks,
        wrap(controller.getManualTasksForProcessModelInCorrelation.bind(controller)));
