@@ -11,7 +11,7 @@ const socketEndpointDiscoveryTag = require('@essential-projects/bootstrapper_con
 
 function registerInContainer(container) {
   container.register('ConsumerApiRouter', ConsumerApiRouter)
-    .dependencies('ConsumerApiController')
+    .dependencies('ConsumerApiController', 'IdentityService')
     .singleton()
     .tags(routerDiscoveryTag);
 
@@ -20,7 +20,7 @@ function registerInContainer(container) {
     .singleton();
 
   container.register('ConsumerApiSocketEndpoint', ConsumerApiSocketEndpoint)
-    .dependencies('ConsumerApiService', 'EventAggregator')
+    .dependencies('ConsumerApiService', 'EventAggregator', 'IdentityService')
     .singleton()
     .tags(socketEndpointDiscoveryTag);
 }
