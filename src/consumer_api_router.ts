@@ -40,6 +40,7 @@ export class ConsumerApiRouter extends BaseRouter {
 
     this.router.get(restSettings.paths.processModels, wrap(controller.getProcessModels.bind(controller)));
     this.router.get(restSettings.paths.processModelById, wrap(controller.getProcessModelById.bind(controller)));
+    this.router.get(restSettings.paths.processModelByProcessInstanceId, wrap(controller.getProcessModelByProcessInstanceId.bind(controller)));
     this.router.get(restSettings.paths.getProcessResultForCorrelation, wrap(controller.getProcessResultForCorrelation.bind(controller)));
     this.router.get(restSettings.paths.getOwnProcessInstances, wrap(controller.getProcessInstancesByIdentity.bind(controller)));
     this.router.post(restSettings.paths.startProcessInstance, wrap(controller.startProcessInstance.bind(controller)));
@@ -59,6 +60,7 @@ export class ConsumerApiRouter extends BaseRouter {
     const controller: ConsumerApiController = this._consumerApiRestController;
 
     this.router.get(restSettings.paths.processModelUserTasks, wrap(controller.getUserTasksForProcessModel.bind(controller)));
+    this.router.get(restSettings.paths.processInstanceUserTasks, wrap(controller.getUserTasksForProcessInstance.bind(controller)));
     this.router.get(restSettings.paths.correlationUserTasks, wrap(controller.getUserTasksForCorrelation.bind(controller)));
     this.router.get(restSettings.paths.processModelCorrelationUserTasks, wrap(controller.getUserTasksForProcessModelInCorrelation.bind(controller)));
     this.router.get(restSettings.paths.getOwnUserTasks, wrap(controller.getWaitingUserTasksByIdentity.bind(controller)));
@@ -69,6 +71,7 @@ export class ConsumerApiRouter extends BaseRouter {
     const controller: ConsumerApiController = this._consumerApiRestController;
 
     this.router.get(restSettings.paths.processModelManualTasks, wrap(controller.getManualTasksForProcessModel.bind(controller)));
+    this.router.get(restSettings.paths.processInstanceManualTasks, wrap(controller.getManualTasksForProcessInstance.bind(controller)));
     this.router.get(restSettings.paths.correlationManualTasks, wrap(controller.getManualTasksForCorrelation.bind(controller)));
     this.router.get(restSettings.paths.processModelCorrelationManualTasks,
        wrap(controller.getManualTasksForProcessModelInCorrelation.bind(controller)));
