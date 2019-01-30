@@ -34,6 +34,16 @@ export class ConsumerApiController implements IConsumerApiHttpController {
     response.status(this.httpCodeSuccessfulResponse).json(result);
   }
 
+  public async getProcessModelByProcessInstanceId(request: HttpRequestWithIdentity, response: Response): Promise<void> {
+    const processInstanceId: string = request.params.process_instance_id;
+    const identity: IIdentity = request.identity;
+
+    const result: DataModels.ProcessModels.ProcessModel =
+      await this.consumerApiService.getProcessModelByProcessInstanceId(identity, processInstanceId);
+
+    response.status(this.httpCodeSuccessfulResponse).json(result);
+  }
+
   public async startProcessInstance(request: HttpRequestWithIdentity, response: Response): Promise<void> {
     const processModelId: string = request.params.process_model_id;
     const startEventId: string = request.params.start_event_id;
@@ -133,6 +143,15 @@ export class ConsumerApiController implements IConsumerApiHttpController {
     response.status(this.httpCodeSuccessfulResponse).json(result);
   }
 
+  public async getUserTasksForProcessInstance(request: HttpRequestWithIdentity, response: Response): Promise<void> {
+    const processInstanceId: string = request.params.process_instance_id;
+    const identity: IIdentity = request.identity;
+
+    const result: DataModels.UserTasks.UserTaskList = await this.consumerApiService.getUserTasksForProcessInstance(identity, processInstanceId);
+
+    response.status(this.httpCodeSuccessfulResponse).json(result);
+  }
+
   public async getUserTasksForCorrelation(request: HttpRequestWithIdentity, response: Response): Promise<void> {
     const correlationId: string = request.params.correlation_id;
     const identity: IIdentity = request.identity;
@@ -179,6 +198,15 @@ export class ConsumerApiController implements IConsumerApiHttpController {
     const identity: IIdentity = request.identity;
 
     const result: DataModels.ManualTasks.ManualTaskList = await this.consumerApiService.getManualTasksForProcessModel(identity, processModelId);
+
+    response.status(this.httpCodeSuccessfulResponse).json(result);
+  }
+
+  public async getManualTasksForProcessInstance(request: HttpRequestWithIdentity, response: Response): Promise<void> {
+    const processInstanceId: string = request.params.process_instance_id;
+    const identity: IIdentity = request.identity;
+
+    const result: DataModels.ManualTasks.ManualTaskList = await this.consumerApiService.getManualTasksForProcessInstance(identity, processInstanceId);
 
     response.status(this.httpCodeSuccessfulResponse).json(result);
   }
