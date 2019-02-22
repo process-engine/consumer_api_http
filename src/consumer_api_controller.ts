@@ -59,7 +59,7 @@ export class ConsumerApiController implements IConsumerApiHttpController {
     const identity: IIdentity = request.identity;
 
     const result: DataModels.ProcessModels.ProcessStartResponsePayload =
-      await this.consumerApiService.startProcessInstance(identity, processModelId, startEventId, payload, startCallbackType, endEventId);
+      await this.consumerApiService.startProcessInstance(identity, processModelId, payload, startCallbackType, startEventId, endEventId);
 
     response.status(this.httpCodeSuccessfulResponse).json(result);
   }
