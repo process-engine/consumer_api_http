@@ -46,7 +46,7 @@ export class ConsumerApiController implements IConsumerApiHttpController {
 
   public async startProcessInstance(request: HttpRequestWithIdentity, response: Response): Promise<void> {
     const processModelId: string = request.params.process_model_id;
-    const startEventId: string = request.params.start_event_id;
+    const startEventId: string = request.query.start_event_id;
     const endEventId: string = request.query.end_event_id;
     const payload: DataModels.ProcessModels.ProcessStartRequestPayload = request.body;
     let startCallbackType: DataModels.ProcessModels.StartCallbackType =
@@ -59,7 +59,7 @@ export class ConsumerApiController implements IConsumerApiHttpController {
     const identity: IIdentity = request.identity;
 
     const result: DataModels.ProcessModels.ProcessStartResponsePayload =
-      await this.consumerApiService.startProcessInstance(identity, processModelId, startEventId, payload, startCallbackType, endEventId);
+      await this.consumerApiService.startProcessInstance(identity, processModelId, payload, startCallbackType, startEventId, endEventId);
 
     response.status(this.httpCodeSuccessfulResponse).json(result);
   }
