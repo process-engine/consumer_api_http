@@ -93,6 +93,18 @@ export class ConsumerApiSocketEndpoint extends BaseSocketEndpoint {
    */
   private async _createSocketScopeNotifications(socketIoInstance: SocketIO.Namespace): Promise<void> {
 
+    const emptyActivityReachedSubscription: Subscription =
+      this._eventAggregator.subscribe(Messages.EventAggregatorSettings.messagePaths.emptyActivityReached,
+        (emptyActivityWaitingMessage: Messages.SystemEvents.UserTaskReachedMessage) => {
+          socketIoInstance.emit(socketSettings.paths.emptyActivityWaiting, emptyActivityWaitingMessage);
+        });
+
+    const emptyActivityFinishedSubscription: Subscription =
+      this._eventAggregator.subscribe(Messages.EventAggregatorSettings.messagePaths.emptyActivityFinished,
+        (emptyActivityFinishedMessage: Messages.SystemEvents.UserTaskFinishedMessage) => {
+          socketIoInstance.emit(socketSettings.paths.emptyActivityFinished, emptyActivityFinishedMessage);
+        });
+
     const userTaskReachedSubscription: Subscription =
       this._eventAggregator.subscribe(Messages.EventAggregatorSettings.messagePaths.userTaskReached,
         (userTaskWaitingMessage: Messages.SystemEvents.UserTaskReachedMessage) => {
@@ -141,6 +153,8 @@ export class ConsumerApiSocketEndpoint extends BaseSocketEndpoint {
           socketIoInstance.emit(socketSettings.paths.processTerminated, processTerminatedMessage);
         });
 
+    this._endpointSubscriptions.push(emptyActivityReachedSubscription);
+    this._endpointSubscriptions.push(emptyActivityFinishedSubscription);
     this._endpointSubscriptions.push(userTaskReachedSubscription);
     this._endpointSubscriptions.push(userTaskFinishedSubscription);
     this._endpointSubscriptions.push(manualTaskReachedSubscription);
@@ -162,6 +176,26 @@ export class ConsumerApiSocketEndpoint extends BaseSocketEndpoint {
   private async _createUserScopeNotifications(socket: SocketIO.Socket, identity: IIdentity): Promise<void> {
 
     const userSubscriptions: Array<Subscription> = [];
+
+    const onEmptyActivityForIdentityWaitingSubscription: Subscription =
+      await this._consumerApiService.onEmptyActivityForIdentityWaiting(identity,
+        (message: Messages.SystemEvents.EmptyActivityReachedMessage) => {
+
+          const eventToPublish: string = socketSettings.paths.userTaskForIdentityWaiting
+            .replace(socketSettings.pathParams.userId, identity.userId);
+
+          socket.emit(eventToPublish, message);
+        });
+
+    const onEmptyActivityForIdentityFinishedSubscription: Subscription =
+      await this._consumerApiService.onEmptyActivityForIdentityFinished(identity,
+        (message: Messages.SystemEvents.EmptyActivityReachedMessage) => {
+
+          const eventToPublish: string = socketSettings.paths.userTaskForIdentityFinished
+            .replace(socketSettings.pathParams.userId, identity.userId);
+
+          socket.emit(eventToPublish, message);
+        });
 
     const onUserTaskForIdentityWaitingSubscription: Subscription =
       await this._consumerApiService.onUserTaskForIdentityWaiting(identity,
@@ -203,6 +237,8 @@ export class ConsumerApiSocketEndpoint extends BaseSocketEndpoint {
         socket.emit(eventToPublish, message);
       });
 
+    userSubscriptions.push(onEmptyActivityForIdentityWaitingSubscription);
+    userSubscriptions.push(onEmptyActivityForIdentityFinishedSubscription);
     userSubscriptions.push(onUserTaskForIdentityWaitingSubscription);
     userSubscriptions.push(onUserTaskForIdentityFinishedSubscription);
     userSubscriptions.push(onManualTaskForIdentityWaitingSubscription);
