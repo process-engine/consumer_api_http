@@ -181,7 +181,7 @@ export class ConsumerApiSocketEndpoint extends BaseSocketEndpoint {
       await this._consumerApiService.onEmptyActivityForIdentityWaiting(identity,
         (message: Messages.SystemEvents.EmptyActivityReachedMessage) => {
 
-          const eventToPublish: string = socketSettings.paths.userTaskForIdentityWaiting
+          const eventToPublish: string = socketSettings.paths.emptyActivityForIdentityWaiting
             .replace(socketSettings.pathParams.userId, identity.userId);
 
           socket.emit(eventToPublish, message);
@@ -191,7 +191,7 @@ export class ConsumerApiSocketEndpoint extends BaseSocketEndpoint {
       await this._consumerApiService.onEmptyActivityForIdentityFinished(identity,
         (message: Messages.SystemEvents.EmptyActivityReachedMessage) => {
 
-          const eventToPublish: string = socketSettings.paths.userTaskForIdentityFinished
+          const eventToPublish: string = socketSettings.paths.emptyActivityForIdentityFinished
             .replace(socketSettings.pathParams.userId, identity.userId);
 
           socket.emit(eventToPublish, message);
