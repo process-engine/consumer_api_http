@@ -26,6 +26,7 @@ export class ConsumerApiRouter extends BaseRouter {
     this._registerMiddlewares();
     this._registerProcessModelRoutes();
     this._registerEventRoutes();
+    this._registerEmptyActivityRoutes();
     this._registerUserTaskRoutes();
     this._registerManualTaskRoutes();
   }
@@ -54,6 +55,18 @@ export class ConsumerApiRouter extends BaseRouter {
     this.router.get(restSettings.paths.processModelCorrelationEvents, wrap(controller.getEventsForProcessModelInCorrelation.bind(controller)));
     this.router.post(restSettings.paths.triggerMessageEvent, wrap(controller.triggerMessageEvent.bind(controller)));
     this.router.post(restSettings.paths.triggerSignalEvent, wrap(controller.triggerSignalEvent.bind(controller)));
+  }
+
+  private _registerEmptyActivityRoutes(): void {
+    const controller: ConsumerApiController = this._consumerApiRestController;
+
+    this.router.get(restSettings.paths.processModelEmptyActivities, wrap(controller.getEmptyActivitiesForProcessModel.bind(controller)));
+    this.router.get(restSettings.paths.processInstanceEmptyActivities, wrap(controller.getEmptyActivitiesForProcessInstance.bind(controller)));
+    this.router.get(restSettings.paths.correlationEmptyActivities, wrap(controller.getEmptyActivitiesForCorrelation.bind(controller)));
+    this.router.get(restSettings.paths.processModelCorrelationEmptyActivities,
+        wrap(controller.getEmptyActivitiesForProcessModelInCorrelation.bind(controller)));
+    this.router.get(restSettings.paths.getOwnEmptyActivities, wrap(controller.getWaitingEmptyActivitiesByIdentity.bind(controller)));
+    this.router.post(restSettings.paths.finishEmptyActivity, wrap(controller.finishEmptyActivity.bind(controller)));
   }
 
   private _registerUserTaskRoutes(): void {
