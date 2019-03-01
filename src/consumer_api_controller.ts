@@ -133,6 +133,68 @@ export class ConsumerApiController implements IConsumerApiHttpController {
     response.status(this.httpCodeSuccessfulNoContentResponse).send();
   }
 
+  // empty-activity-routes
+  public async getEmptyActivitiesForProcessModel(request: HttpRequestWithIdentity, response: Response): Promise<void> {
+    const processModelId: string = request.params.process_model_id;
+    const identity: IIdentity = request.identity;
+
+    const result: DataModels.EmptyActivities.EmptyActivityList =
+      await this.consumerApiService.getEmptyActivitiesForProcessModel(identity, processModelId);
+
+    response.status(this.httpCodeSuccessfulResponse).json(result);
+  }
+
+  public async getEmptyActivitiesForProcessInstance(request: HttpRequestWithIdentity, response: Response): Promise<void> {
+    const processInstanceId: string = request.params.process_instance_id;
+    const identity: IIdentity = request.identity;
+
+    const result: DataModels.EmptyActivities.EmptyActivityList =
+      await this.consumerApiService.getEmptyActivitiesForProcessInstance(identity, processInstanceId);
+
+    response.status(this.httpCodeSuccessfulResponse).json(result);
+  }
+
+  public async getEmptyActivitiesForCorrelation(request: HttpRequestWithIdentity, response: Response): Promise<void> {
+    const correlationId: string = request.params.correlation_id;
+    const identity: IIdentity = request.identity;
+
+    const result: DataModels.EmptyActivities.EmptyActivityList =
+      await this.consumerApiService.getEmptyActivitiesForCorrelation(identity, correlationId);
+
+    response.status(this.httpCodeSuccessfulResponse).json(result);
+  }
+
+  public async getEmptyActivitiesForProcessModelInCorrelation(request: HttpRequestWithIdentity, response: Response): Promise<void> {
+    const processModelId: string = request.params.process_model_id;
+    const correlationId: string = request.params.correlation_id;
+    const identity: IIdentity = request.identity;
+
+    const result: DataModels.EmptyActivities.EmptyActivityList =
+      await this.consumerApiService.getEmptyActivitiesForProcessModelInCorrelation(identity, processModelId, correlationId);
+
+    response.status(this.httpCodeSuccessfulResponse).json(result);
+  }
+
+  public async getWaitingEmptyActivitiesByIdentity(request: HttpRequestWithIdentity, response: Response): Promise<void> {
+    const identity: IIdentity = request.identity;
+
+    const result: DataModels.EmptyActivities.EmptyActivityList =
+      await this.consumerApiService.getWaitingEmptyActivitiesByIdentity(identity);
+
+    response.status(this.httpCodeSuccessfulResponse).json(result);
+  }
+
+  public async finishEmptyActivity(request: HttpRequestWithIdentity, response: Response): Promise<void> {
+    const identity: IIdentity = request.identity;
+    const processInstanceId: string = request.params.process_instance_id;
+    const correlationId: string = request.params.correlation_id;
+    const emptyActivityInstanceId: string = request.params.empty_activity_instance_id;
+
+    await this.consumerApiService.finishEmptyActivity(identity, processInstanceId, correlationId, emptyActivityInstanceId);
+
+    response.status(this.httpCodeSuccessfulNoContentResponse).send();
+  }
+
   // user-task-routes
   public async getUserTasksForProcessModel(request: HttpRequestWithIdentity, response: Response): Promise<void> {
     const processModelId: string = request.params.process_model_id;
