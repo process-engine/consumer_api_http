@@ -4,6 +4,7 @@ import {UnauthorizedError} from '@essential-projects/errors_ts';
 import {IEventAggregator, Subscription} from '@essential-projects/event_aggregator_contracts';
 import {BaseSocketEndpoint} from '@essential-projects/http_node';
 import {IIdentity, IIdentityService} from '@essential-projects/iam_contracts';
+import {IEndpointSocketScope, ISocketClient} from '@essential-projects/websocket_contracts';
 
 import {IConsumerApi, Messages, socketSettings} from '@process-engine/consumer_api_contracts';
 
@@ -31,35 +32,18 @@ export class ConsumerApiSocketEndpoint extends BaseSocketEndpoint {
     return socketSettings.namespace;
   }
 
-  public async initializeEndpoint(socketIo: SocketIO.Namespace): Promise<void> {
+  public async initializeEndpoint(endpoint: IEndpointSocketScope): Promise<void> {
 
-    socketIo.on('connect', async(socket: SocketIO.Socket) => {
-      const token: string = socket.handshake.headers['authorization'];
+    endpoint.onConnect(async(socket: ISocketClient, identity: IIdentity) => {
 
-      const identityNotSet: boolean = token === undefined;
-      if (identityNotSet) {
-        logger.error('A Socket.IO client attempted to connect without providing an Auth-Token!');
-
-        const unauthorizedError: UnauthorizedError = new UnauthorizedError('No auth token provided!');
-        socket.emit('error', unauthorizedError);
-        socket.disconnect(true);
-
-        return;
-      }
-
-      const identity: IIdentity = await this._identityService.getIdentity(token);
-
-      logger.info(`Client with socket id "${socket.id} connected."`);
-
-      socket.on('disconnect', async(reason: any) => {
+    socket.onDisconnect(async() => {
         await this._clearUserScopeNotifications(identity);
-        logger.info(`Client with socket id "${socket.id} disconnected."`);
-      });
-
-      await this._createUserScopeNotifications(socket, identity);
     });
 
-    await this._createSocketScopeNotifications(socketIo);
+    await this._createUserScopeNotifications(socket, identity);
+    });
+
+    await this._createSocketScopeNotifications(endpoint);
   }
 
   public async dispose(): Promise<void> {
@@ -91,66 +75,66 @@ export class ConsumerApiSocketEndpoint extends BaseSocketEndpoint {
    * @param socketIoInstance The socketIO instance for which to create the
    *                         subscriptions.
    */
-  private async _createSocketScopeNotifications(socketIoInstance: SocketIO.Namespace): Promise<void> {
+  private async _createSocketScopeNotifications(endpoint: IEndpointSocketScope): Promise<void> {
 
     const emptyActivityReachedSubscription: Subscription =
       this._eventAggregator.subscribe(Messages.EventAggregatorSettings.messagePaths.emptyActivityReached,
         (emptyActivityWaitingMessage: Messages.SystemEvents.UserTaskReachedMessage) => {
-          socketIoInstance.emit(socketSettings.paths.emptyActivityWaiting, emptyActivityWaitingMessage);
+          endpoint.emit(socketSettings.paths.emptyActivityWaiting, emptyActivityWaitingMessage);
         });
 
     const emptyActivityFinishedSubscription: Subscription =
       this._eventAggregator.subscribe(Messages.EventAggregatorSettings.messagePaths.emptyActivityFinished,
         (emptyActivityFinishedMessage: Messages.SystemEvents.UserTaskFinishedMessage) => {
-          socketIoInstance.emit(socketSettings.paths.emptyActivityFinished, emptyActivityFinishedMessage);
+          endpoint.emit(socketSettings.paths.emptyActivityFinished, emptyActivityFinishedMessage);
         });
 
     const userTaskReachedSubscription: Subscription =
       this._eventAggregator.subscribe(Messages.EventAggregatorSettings.messagePaths.userTaskReached,
         (userTaskWaitingMessage: Messages.SystemEvents.UserTaskReachedMessage) => {
-          socketIoInstance.emit(socketSettings.paths.userTaskWaiting, userTaskWaitingMessage);
+          endpoint.emit(socketSettings.paths.userTaskWaiting, userTaskWaitingMessage);
         });
 
     const userTaskFinishedSubscription: Subscription =
       this._eventAggregator.subscribe(Messages.EventAggregatorSettings.messagePaths.userTaskFinished,
         (userTaskFinishedMessage: Messages.SystemEvents.UserTaskFinishedMessage) => {
-          socketIoInstance.emit(socketSettings.paths.userTaskFinished, userTaskFinishedMessage);
+          endpoint.emit(socketSettings.paths.userTaskFinished, userTaskFinishedMessage);
         });
 
     const manualTaskReachedSubscription: Subscription =
       this._eventAggregator.subscribe(Messages.EventAggregatorSettings.messagePaths.manualTaskReached,
         (manualTaskWaitingMessage: Messages.SystemEvents.ManualTaskReachedMessage) => {
-          socketIoInstance.emit(socketSettings.paths.manualTaskWaiting, manualTaskWaitingMessage);
+          endpoint.emit(socketSettings.paths.manualTaskWaiting, manualTaskWaitingMessage);
         });
 
     const manualTaskFinishedSubscription: Subscription =
       this._eventAggregator.subscribe(Messages.EventAggregatorSettings.messagePaths.manualTaskFinished,
         (manualTaskFinishedMessage: Messages.SystemEvents.ManualTaskFinishedMessage) => {
-          socketIoInstance.emit(socketSettings.paths.manualTaskFinished, manualTaskFinishedMessage);
+          endpoint.emit(socketSettings.paths.manualTaskFinished, manualTaskFinishedMessage);
         });
 
     const processStartedSubscription: Subscription =
       this._eventAggregator.subscribe(Messages.EventAggregatorSettings.messagePaths.processStarted,
         (processStartedMessage: Messages.SystemEvents.ProcessStartedMessage) => {
-          socketIoInstance.emit(socketSettings.paths.processStarted, processStartedMessage);
+          endpoint.emit(socketSettings.paths.processStarted, processStartedMessage);
 
           const processInstanceStartedIdMessage: string =
             socketSettings.paths.processInstanceStarted
               .replace(socketSettings.pathParams.processModelId, processStartedMessage.processModelId);
 
-          socketIoInstance.emit(processInstanceStartedIdMessage, processStartedMessage);
+          endpoint.emit(processInstanceStartedIdMessage, processStartedMessage);
         });
 
     const processEndedSubscription: Subscription =
       this._eventAggregator.subscribe(Messages.EventAggregatorSettings.messagePaths.processEnded,
         (processEndedMessage: Messages.BpmnEvents.EndEventReachedMessage) => {
-          socketIoInstance.emit(socketSettings.paths.processEnded, processEndedMessage);
+          endpoint.emit(socketSettings.paths.processEnded, processEndedMessage);
         });
 
     const processTerminatedSubscription: Subscription =
       this._eventAggregator.subscribe(Messages.EventAggregatorSettings.messagePaths.processTerminated,
         (processTerminatedMessage: Messages.BpmnEvents.TerminateEndEventReachedMessage) => {
-          socketIoInstance.emit(socketSettings.paths.processTerminated, processTerminatedMessage);
+          endpoint.emit(socketSettings.paths.processTerminated, processTerminatedMessage);
         });
 
     this._endpointSubscriptions.push(emptyActivityReachedSubscription);
@@ -173,7 +157,7 @@ export class ConsumerApiSocketEndpoint extends BaseSocketEndpoint {
    * @param socket   The socketIO client on which to create the subscriptions.
    * @param identity The identity for which to create the subscriptions
    */
-  private async _createUserScopeNotifications(socket: SocketIO.Socket, identity: IIdentity): Promise<void> {
+  private async _createUserScopeNotifications(socket: ISocketClient, identity: IIdentity): Promise<void> {
 
     const userSubscriptions: Array<Subscription> = [];
 
