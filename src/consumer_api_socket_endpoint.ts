@@ -1,16 +1,15 @@
 import {Logger} from 'loggerhythm';
 
-import {UnauthorizedError} from '@essential-projects/errors_ts';
 import {IEventAggregator, Subscription} from '@essential-projects/event_aggregator_contracts';
 import {BaseSocketEndpoint} from '@essential-projects/http_node';
 import {IIdentity, IIdentityService} from '@essential-projects/iam_contracts';
 import {IEndpointSocketScope, ISocketClient} from '@essential-projects/websocket_contracts';
 
-import {IConsumerApi, Messages, socketSettings} from '@process-engine/consumer_api_contracts';
+import { IConsumerApi, Messages, socketSettings} from '@process-engine/consumer_api_contracts';
 
 const logger: Logger = Logger.createLogger('consumer_api:http:socket.io_endpoint');
 
-type UserSubscriptionDictionary = {[userId: string]: Array<Subscription>};
+type UserSubscriptionDictionary = { [userId: string]: Array<Subscription> };
 
 export class ConsumerApiSocketEndpoint extends BaseSocketEndpoint {
 
@@ -36,11 +35,11 @@ export class ConsumerApiSocketEndpoint extends BaseSocketEndpoint {
 
     endpoint.onConnect(async(socket: ISocketClient, identity: IIdentity) => {
 
-    socket.onDisconnect(async() => {
+      socket.onDisconnect(async() => {
         await this._clearUserScopeNotifications(identity);
-    });
+      });
 
-    await this._createUserScopeNotifications(socket, identity);
+      await this._createUserScopeNotifications(socket, identity);
     });
 
     await this._createSocketScopeNotifications(endpoint);
@@ -213,13 +212,13 @@ export class ConsumerApiSocketEndpoint extends BaseSocketEndpoint {
 
     const onManualTaskForIdentityFinishedSubscription: Subscription =
       await this._consumerApiService.onManualTaskForIdentityFinished(identity,
-      (message: Messages.SystemEvents.UserTaskReachedMessage) => {
+        (message: Messages.SystemEvents.UserTaskReachedMessage) => {
 
-        const eventToPublish: string = socketSettings.paths.manualTaskForIdentityFinished
-          .replace(socketSettings.pathParams.userId, identity.userId);
+          const eventToPublish: string = socketSettings.paths.manualTaskForIdentityFinished
+            .replace(socketSettings.pathParams.userId, identity.userId);
 
-        socket.emit(eventToPublish, message);
-      });
+          socket.emit(eventToPublish, message);
+        });
 
     userSubscriptions.push(onEmptyActivityForIdentityWaitingSubscription);
     userSubscriptions.push(onEmptyActivityForIdentityFinishedSubscription);
