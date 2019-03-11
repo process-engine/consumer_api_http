@@ -20,7 +20,7 @@ function registerInContainer(container) {
     .singleton();
 
   container.register('ConsumerApiSocketEndpoint', ConsumerApiSocketEndpoint)
-    .dependencies('ConsumerApiService', 'EventAggregator', 'IdentityService')
+    .dependencies('ConsumerApiService', 'EventAggregator')
     .singleton()
     .tags(socketEndpointDiscoveryTag);
 }

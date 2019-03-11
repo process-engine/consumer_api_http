@@ -2,10 +2,10 @@ import {Logger} from 'loggerhythm';
 
 import {IEventAggregator, Subscription} from '@essential-projects/event_aggregator_contracts';
 import {BaseSocketEndpoint} from '@essential-projects/http_node';
-import {IIdentity, IIdentityService} from '@essential-projects/iam_contracts';
+import {IIdentity} from '@essential-projects/iam_contracts';
 import {IEndpointSocketScope, ISocketClient} from '@essential-projects/websocket_contracts';
 
-import { IConsumerApi, Messages, socketSettings} from '@process-engine/consumer_api_contracts';
+import {IConsumerApi, Messages, socketSettings} from '@process-engine/consumer_api_contracts';
 
 const logger: Logger = Logger.createLogger('consumer_api:http:socket.io_endpoint');
 
@@ -15,16 +15,14 @@ export class ConsumerApiSocketEndpoint extends BaseSocketEndpoint {
 
   private _consumerApiService: IConsumerApi;
   private _eventAggregator: IEventAggregator;
-  private _identityService: IIdentityService;
 
   private _endpointSubscriptions: Array<Subscription> = [];
   private _userSubscriptions: UserSubscriptionDictionary = {};
 
-  constructor(consumerApiService: IConsumerApi, eventAggregator: IEventAggregator, identityService: IIdentityService) {
+  constructor(consumerApiService: IConsumerApi, eventAggregator: IEventAggregator) {
     super();
     this._consumerApiService = consumerApiService;
     this._eventAggregator = eventAggregator;
-    this._identityService = identityService;
   }
 
   public get namespace(): string {
