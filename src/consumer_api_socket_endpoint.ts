@@ -33,7 +33,7 @@ export class ConsumerApiSocketEndpoint extends BaseSocketEndpoint {
 
   public async initializeEndpoint(socketIo: SocketIO.Namespace): Promise<void> {
 
-    socketIo.on('connect', async (socket: SocketIO.Socket): Promise<void> => {
+    socketIo.on('connect', async(socket: SocketIO.Socket): Promise<void> => {
       const token = socket.handshake.headers.authorization;
 
       const identityNotSet = token === undefined;
@@ -52,7 +52,7 @@ export class ConsumerApiSocketEndpoint extends BaseSocketEndpoint {
       logger.info(`Client with socket id "${socket.id} connected."`);
 
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      socket.on('disconnect', async (reason: any): Promise<void> => {
+      socket.on('disconnect', async(reason: any): Promise<void> => {
         await this.clearUserScopeNotifications(identity);
         logger.info(`Client with socket id "${socket.id} disconnected."`);
       });
@@ -127,10 +127,24 @@ export class ConsumerApiSocketEndpoint extends BaseSocketEndpoint {
         },
       );
 
-    const manualTaskReachedSubscription =
+    const callActivityReachedSubscription =
       this.eventAggregator.subscribe(
-        Messages.EventAggregatorSettings.messagePaths.manualTaskReached,
-        (manualTaskWaitingMessage: Messages.SystemEvents.ManualTaskReachedMessage): void => {
+        Messages.EventAggregatorSettings.messagePaths.callActivityReached,
+        (callActivityWaitingMessage: Messages.SystemEvents.CallActivityReachedMessage) => {
+          socketIoInstance.emit(socketSettings.paths.callActivityWaiting, callActivityWaitingMessage);
+        });
+
+    const callActivityFinishedSubscription =
+      this.eventAggregator.subscribe(
+        Messages.EventAggregatorSettings.messagePaths.callActivityFinished,
+        (callActivityFinishedMessage: Messages.SystemEvents.CallActivityFinishedMessage) => {
+          socketIoInstance.emit(socketSettings.paths.callActivityFinished, callActivityFinishedMessage);
+        });
+
+    const manualTaskReachedSubscription =
+    this.eventAggregator.subscribe(
+      Messages.EventAggregatorSettings.messagePaths.manualTaskReached,
+      (manualTaskWaitingMessage: Messages.SystemEvents.ManualTaskReachedMessage): void => {
           socketIoInstance.emit(socketSettings.paths.manualTaskWaiting, manualTaskWaitingMessage);
         },
       );
@@ -173,6 +187,8 @@ export class ConsumerApiSocketEndpoint extends BaseSocketEndpoint {
         },
       );
 
+    this.endpointSubscriptions.push(callActivityReachedSubscription);
+    this.endpointSubscriptions.push(callActivityFinishedSubscription);
     this.endpointSubscriptions.push(emptyActivityReachedSubscription);
     this.endpointSubscriptions.push(emptyActivityFinishedSubscription);
     this.endpointSubscriptions.push(userTaskReachedSubscription);
