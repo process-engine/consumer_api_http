@@ -13,18 +13,18 @@ type UserSubscriptionDictionary = {[userId: string]: Array<Subscription>};
 
 export class ConsumerApiSocketEndpoint extends BaseSocketEndpoint {
 
-  private _consumerApiService: IConsumerApi;
-  private _eventAggregator: IEventAggregator;
-  private _identityService: IIdentityService;
+  private consumerApiService: IConsumerApi;
+  private eventAggregator: IEventAggregator;
+  private identityService: IIdentityService;
 
-  private _endpointSubscriptions: Array<Subscription> = [];
-  private _userSubscriptions: UserSubscriptionDictionary = {};
+  private endpointSubscriptions: Array<Subscription> = [];
+  private userSubscriptions: UserSubscriptionDictionary = {};
 
   constructor(consumerApiService: IConsumerApi, eventAggregator: IEventAggregator, identityService: IIdentityService) {
     super();
-    this._consumerApiService = consumerApiService;
-    this._eventAggregator = eventAggregator;
-    this._identityService = identityService;
+    this.consumerApiService = consumerApiService;
+    this.eventAggregator = eventAggregator;
+    this.identityService = identityService;
   }
 
   public get namespace(): string {
@@ -33,52 +33,54 @@ export class ConsumerApiSocketEndpoint extends BaseSocketEndpoint {
 
   public async initializeEndpoint(socketIo: SocketIO.Namespace): Promise<void> {
 
-    socketIo.on('connect', async(socket: SocketIO.Socket) => {
-      const token: string = socket.handshake.headers['authorization'];
+    socketIo.on('connect', async (socket: SocketIO.Socket): Promise<void> => {
+      const token = socket.handshake.headers.authorization;
 
-      const identityNotSet: boolean = token === undefined;
+      const identityNotSet = token === undefined;
       if (identityNotSet) {
         logger.error('A Socket.IO client attempted to connect without providing an Auth-Token!');
 
-        const unauthorizedError: UnauthorizedError = new UnauthorizedError('No auth token provided!');
+        const unauthorizedError = new UnauthorizedError('No auth token provided!');
         socket.emit('error', unauthorizedError);
         socket.disconnect(true);
 
         return;
       }
 
-      const identity: IIdentity = await this._identityService.getIdentity(token);
+      const identity = await this.identityService.getIdentity(token);
 
       logger.info(`Client with socket id "${socket.id} connected."`);
 
-      socket.on('disconnect', async(reason: any) => {
-        await this._clearUserScopeNotifications(identity);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      socket.on('disconnect', async (reason: any): Promise<void> => {
+        await this.clearUserScopeNotifications(identity);
         logger.info(`Client with socket id "${socket.id} disconnected."`);
       });
 
-      await this._createUserScopeNotifications(socket, identity);
+      await this.createUserScopeNotifications(socket, identity);
     });
 
-    await this._createSocketScopeNotifications(socketIo);
+    await this.createSocketScopeNotifications(socketIo);
   }
 
   public async dispose(): Promise<void> {
 
-    logger.info(`Disposing Socket IO subscriptions...`);
+    logger.info('Disposing Socket IO subscriptions...');
     // Clear out Socket-scope Subscriptions.
-    for (const subscription of this._endpointSubscriptions) {
-      this._eventAggregator.unsubscribe(subscription);
+    for (const subscription of this.endpointSubscriptions) {
+      this.eventAggregator.unsubscribe(subscription);
     }
 
     // Clear out all User-Subscriptions.
-    for (const userId in this._userSubscriptions) {
-      const userSubscriptions: Array<Subscription> = this._userSubscriptions[userId];
+    // eslint-disable-next-line
+    for (const userId in this.userSubscriptions) {
+      const userSubscriptions = this.userSubscriptions[userId];
 
       for (const subscription of userSubscriptions) {
-        this._eventAggregator.unsubscribe(subscription);
+        this.eventAggregator.unsubscribe(subscription);
       }
 
-      delete this._userSubscriptions[userId];
+      delete this.userSubscriptions[userId];
     }
   }
 
@@ -91,47 +93,60 @@ export class ConsumerApiSocketEndpoint extends BaseSocketEndpoint {
    * @param socketIoInstance The socketIO instance for which to create the
    *                         subscriptions.
    */
-  private async _createSocketScopeNotifications(socketIoInstance: SocketIO.Namespace): Promise<void> {
+  private async createSocketScopeNotifications(socketIoInstance: SocketIO.Namespace): Promise<void> {
 
-    const emptyActivityReachedSubscription: Subscription =
-      this._eventAggregator.subscribe(Messages.EventAggregatorSettings.messagePaths.emptyActivityReached,
-        (emptyActivityWaitingMessage: Messages.SystemEvents.UserTaskReachedMessage) => {
+    const emptyActivityReachedSubscription =
+      this.eventAggregator.subscribe(
+        Messages.EventAggregatorSettings.messagePaths.emptyActivityReached,
+        (emptyActivityWaitingMessage: Messages.SystemEvents.UserTaskReachedMessage): void => {
           socketIoInstance.emit(socketSettings.paths.emptyActivityWaiting, emptyActivityWaitingMessage);
-        });
+        },
+      );
 
-    const emptyActivityFinishedSubscription: Subscription =
-      this._eventAggregator.subscribe(Messages.EventAggregatorSettings.messagePaths.emptyActivityFinished,
-        (emptyActivityFinishedMessage: Messages.SystemEvents.UserTaskFinishedMessage) => {
+    const emptyActivityFinishedSubscription =
+      this.eventAggregator.subscribe(
+        Messages.EventAggregatorSettings.messagePaths.emptyActivityFinished,
+        (emptyActivityFinishedMessage: Messages.SystemEvents.UserTaskFinishedMessage): void => {
           socketIoInstance.emit(socketSettings.paths.emptyActivityFinished, emptyActivityFinishedMessage);
-        });
+        },
+      );
 
-    const userTaskReachedSubscription: Subscription =
-      this._eventAggregator.subscribe(Messages.EventAggregatorSettings.messagePaths.userTaskReached,
-        (userTaskWaitingMessage: Messages.SystemEvents.UserTaskReachedMessage) => {
+    const userTaskReachedSubscription =
+      this.eventAggregator.subscribe(
+        Messages.EventAggregatorSettings.messagePaths.userTaskReached,
+        (userTaskWaitingMessage: Messages.SystemEvents.UserTaskReachedMessage): void => {
           socketIoInstance.emit(socketSettings.paths.userTaskWaiting, userTaskWaitingMessage);
-        });
+        },
+      );
 
-    const userTaskFinishedSubscription: Subscription =
-      this._eventAggregator.subscribe(Messages.EventAggregatorSettings.messagePaths.userTaskFinished,
-        (userTaskFinishedMessage: Messages.SystemEvents.UserTaskFinishedMessage) => {
+    const userTaskFinishedSubscription =
+      this.eventAggregator.subscribe(
+        Messages.EventAggregatorSettings.messagePaths.userTaskFinished,
+        (userTaskFinishedMessage: Messages.SystemEvents.UserTaskFinishedMessage): void => {
           socketIoInstance.emit(socketSettings.paths.userTaskFinished, userTaskFinishedMessage);
-        });
+        },
+      );
 
-    const manualTaskReachedSubscription: Subscription =
-      this._eventAggregator.subscribe(Messages.EventAggregatorSettings.messagePaths.manualTaskReached,
-        (manualTaskWaitingMessage: Messages.SystemEvents.ManualTaskReachedMessage) => {
+    const manualTaskReachedSubscription =
+      this.eventAggregator.subscribe(
+        Messages.EventAggregatorSettings.messagePaths.manualTaskReached,
+        (manualTaskWaitingMessage: Messages.SystemEvents.ManualTaskReachedMessage): void => {
           socketIoInstance.emit(socketSettings.paths.manualTaskWaiting, manualTaskWaitingMessage);
-        });
+        },
+      );
 
-    const manualTaskFinishedSubscription: Subscription =
-      this._eventAggregator.subscribe(Messages.EventAggregatorSettings.messagePaths.manualTaskFinished,
-        (manualTaskFinishedMessage: Messages.SystemEvents.ManualTaskFinishedMessage) => {
+    const manualTaskFinishedSubscription =
+      this.eventAggregator.subscribe(
+        Messages.EventAggregatorSettings.messagePaths.manualTaskFinished,
+        (manualTaskFinishedMessage: Messages.SystemEvents.ManualTaskFinishedMessage): void => {
           socketIoInstance.emit(socketSettings.paths.manualTaskFinished, manualTaskFinishedMessage);
-        });
+        },
+      );
 
-    const processStartedSubscription: Subscription =
-      this._eventAggregator.subscribe(Messages.EventAggregatorSettings.messagePaths.processStarted,
-        (processStartedMessage: Messages.SystemEvents.ProcessStartedMessage) => {
+    const processStartedSubscription =
+      this.eventAggregator.subscribe(
+        Messages.EventAggregatorSettings.messagePaths.processStarted,
+        (processStartedMessage: Messages.SystemEvents.ProcessStartedMessage): void => {
           socketIoInstance.emit(socketSettings.paths.processStarted, processStartedMessage);
 
           const processInstanceStartedIdMessage: string =
@@ -139,29 +154,34 @@ export class ConsumerApiSocketEndpoint extends BaseSocketEndpoint {
               .replace(socketSettings.pathParams.processModelId, processStartedMessage.processModelId);
 
           socketIoInstance.emit(processInstanceStartedIdMessage, processStartedMessage);
-        });
+        },
+      );
 
-    const processEndedSubscription: Subscription =
-      this._eventAggregator.subscribe(Messages.EventAggregatorSettings.messagePaths.processEnded,
-        (processEndedMessage: Messages.BpmnEvents.EndEventReachedMessage) => {
+    const processEndedSubscription =
+      this.eventAggregator.subscribe(
+        Messages.EventAggregatorSettings.messagePaths.processEnded,
+        (processEndedMessage: Messages.BpmnEvents.EndEventReachedMessage): void => {
           socketIoInstance.emit(socketSettings.paths.processEnded, processEndedMessage);
-        });
+        },
+      );
 
-    const processTerminatedSubscription: Subscription =
-      this._eventAggregator.subscribe(Messages.EventAggregatorSettings.messagePaths.processTerminated,
-        (processTerminatedMessage: Messages.BpmnEvents.TerminateEndEventReachedMessage) => {
+    const processTerminatedSubscription =
+      this.eventAggregator.subscribe(
+        Messages.EventAggregatorSettings.messagePaths.processTerminated,
+        (processTerminatedMessage: Messages.BpmnEvents.TerminateEndEventReachedMessage): void => {
           socketIoInstance.emit(socketSettings.paths.processTerminated, processTerminatedMessage);
-        });
+        },
+      );
 
-    this._endpointSubscriptions.push(emptyActivityReachedSubscription);
-    this._endpointSubscriptions.push(emptyActivityFinishedSubscription);
-    this._endpointSubscriptions.push(userTaskReachedSubscription);
-    this._endpointSubscriptions.push(userTaskFinishedSubscription);
-    this._endpointSubscriptions.push(manualTaskReachedSubscription);
-    this._endpointSubscriptions.push(manualTaskFinishedSubscription);
-    this._endpointSubscriptions.push(processStartedSubscription);
-    this._endpointSubscriptions.push(processEndedSubscription);
-    this._endpointSubscriptions.push(processTerminatedSubscription);
+    this.endpointSubscriptions.push(emptyActivityReachedSubscription);
+    this.endpointSubscriptions.push(emptyActivityFinishedSubscription);
+    this.endpointSubscriptions.push(userTaskReachedSubscription);
+    this.endpointSubscriptions.push(userTaskFinishedSubscription);
+    this.endpointSubscriptions.push(manualTaskReachedSubscription);
+    this.endpointSubscriptions.push(manualTaskFinishedSubscription);
+    this.endpointSubscriptions.push(processStartedSubscription);
+    this.endpointSubscriptions.push(processEndedSubscription);
+    this.endpointSubscriptions.push(processTerminatedSubscription);
   }
 
   /**
@@ -173,69 +193,81 @@ export class ConsumerApiSocketEndpoint extends BaseSocketEndpoint {
    * @param socket   The socketIO client on which to create the subscriptions.
    * @param identity The identity for which to create the subscriptions
    */
-  private async _createUserScopeNotifications(socket: SocketIO.Socket, identity: IIdentity): Promise<void> {
+  private async createUserScopeNotifications(socket: SocketIO.Socket, identity: IIdentity): Promise<void> {
 
     const userSubscriptions: Array<Subscription> = [];
 
-    const onEmptyActivityForIdentityWaitingSubscription: Subscription =
-      await this._consumerApiService.onEmptyActivityForIdentityWaiting(identity,
-        (message: Messages.SystemEvents.EmptyActivityReachedMessage) => {
+    const onEmptyActivityForIdentityWaitingSubscription =
+      await this.consumerApiService.onEmptyActivityForIdentityWaiting(
+        identity,
+        (message: Messages.SystemEvents.EmptyActivityReachedMessage): void => {
 
-          const eventToPublish: string = socketSettings.paths.emptyActivityForIdentityWaiting
+          const eventToPublish = socketSettings.paths.emptyActivityForIdentityWaiting
             .replace(socketSettings.pathParams.userId, identity.userId);
 
           socket.emit(eventToPublish, message);
-        });
+        },
+      );
 
-    const onEmptyActivityForIdentityFinishedSubscription: Subscription =
-      await this._consumerApiService.onEmptyActivityForIdentityFinished(identity,
-        (message: Messages.SystemEvents.EmptyActivityReachedMessage) => {
+    const onEmptyActivityForIdentityFinishedSubscription =
+      await this.consumerApiService.onEmptyActivityForIdentityFinished(
+        identity,
+        (message: Messages.SystemEvents.EmptyActivityReachedMessage): void => {
 
-          const eventToPublish: string = socketSettings.paths.emptyActivityForIdentityFinished
+          const eventToPublish = socketSettings.paths.emptyActivityForIdentityFinished
             .replace(socketSettings.pathParams.userId, identity.userId);
 
           socket.emit(eventToPublish, message);
-        });
+        },
+      );
 
-    const onUserTaskForIdentityWaitingSubscription: Subscription =
-      await this._consumerApiService.onUserTaskForIdentityWaiting(identity,
-        (message: Messages.SystemEvents.UserTaskReachedMessage) => {
+    const onUserTaskForIdentityWaitingSubscription =
+      await this.consumerApiService.onUserTaskForIdentityWaiting(
+        identity,
+        (message: Messages.SystemEvents.UserTaskReachedMessage): void => {
 
-          const eventToPublish: string = socketSettings.paths.userTaskForIdentityWaiting
+          const eventToPublish = socketSettings.paths.userTaskForIdentityWaiting
             .replace(socketSettings.pathParams.userId, identity.userId);
 
           socket.emit(eventToPublish, message);
-        });
+        },
+      );
 
-    const onUserTaskForIdentityFinishedSubscription: Subscription =
-      await this._consumerApiService.onUserTaskForIdentityFinished(identity,
-        (message: Messages.SystemEvents.UserTaskReachedMessage) => {
+    const onUserTaskForIdentityFinishedSubscription =
+      await this.consumerApiService.onUserTaskForIdentityFinished(
+        identity,
+        (message: Messages.SystemEvents.UserTaskReachedMessage): void => {
 
-          const eventToPublish: string = socketSettings.paths.userTaskForIdentityFinished
+          const eventToPublish = socketSettings.paths.userTaskForIdentityFinished
             .replace(socketSettings.pathParams.userId, identity.userId);
 
           socket.emit(eventToPublish, message);
-        });
+        },
+      );
 
-    const onManualTaskForIdentityWaitingSubscription: Subscription =
-      await this._consumerApiService.onManualTaskForIdentityWaiting(identity,
-        (message: Messages.SystemEvents.UserTaskReachedMessage) => {
+    const onManualTaskForIdentityWaitingSubscription =
+      await this.consumerApiService.onManualTaskForIdentityWaiting(
+        identity,
+        (message: Messages.SystemEvents.UserTaskReachedMessage): void => {
 
-          const eventToPublish: string = socketSettings.paths.manualTaskForIdentityWaiting
+          const eventToPublish = socketSettings.paths.manualTaskForIdentityWaiting
             .replace(socketSettings.pathParams.userId, identity.userId);
 
           socket.emit(eventToPublish, message);
-        });
+        },
+      );
 
-    const onManualTaskForIdentityFinishedSubscription: Subscription =
-      await this._consumerApiService.onManualTaskForIdentityFinished(identity,
-      (message: Messages.SystemEvents.UserTaskReachedMessage) => {
+    const onManualTaskForIdentityFinishedSubscription =
+      await this.consumerApiService.onManualTaskForIdentityFinished(
+        identity,
+        (message: Messages.SystemEvents.UserTaskReachedMessage): void => {
 
-        const eventToPublish: string = socketSettings.paths.manualTaskForIdentityFinished
-          .replace(socketSettings.pathParams.userId, identity.userId);
+          const eventToPublish = socketSettings.paths.manualTaskForIdentityFinished
+            .replace(socketSettings.pathParams.userId, identity.userId);
 
-        socket.emit(eventToPublish, message);
-      });
+          socket.emit(eventToPublish, message);
+        },
+      );
 
     userSubscriptions.push(onEmptyActivityForIdentityWaitingSubscription);
     userSubscriptions.push(onEmptyActivityForIdentityFinishedSubscription);
@@ -244,7 +276,7 @@ export class ConsumerApiSocketEndpoint extends BaseSocketEndpoint {
     userSubscriptions.push(onManualTaskForIdentityWaitingSubscription);
     userSubscriptions.push(onManualTaskForIdentityFinishedSubscription);
 
-    this._userSubscriptions[identity.userId] = userSubscriptions;
+    this.userSubscriptions[identity.userId] = userSubscriptions;
   }
 
   /**
@@ -254,12 +286,12 @@ export class ConsumerApiSocketEndpoint extends BaseSocketEndpoint {
    * @async
    * @param identity The identity for which to remove the Subscriptions.
    */
-  private async _clearUserScopeNotifications(identity: IIdentity): Promise<void> {
+  private async clearUserScopeNotifications(identity: IIdentity): Promise<void> {
 
     logger.verbose(`Clearing subscriptions for user with ID ${identity.userId}`);
-    const userSubscriptions: Array<Subscription> = this._userSubscriptions[identity.userId];
+    const userSubscriptions = this.userSubscriptions[identity.userId];
 
-    const noSubscriptionsFound: boolean = !userSubscriptions;
+    const noSubscriptionsFound = !userSubscriptions;
     if (noSubscriptionsFound) {
       logger.verbose(`No subscriptions for user with ID ${identity.userId} found.`);
 
@@ -267,9 +299,10 @@ export class ConsumerApiSocketEndpoint extends BaseSocketEndpoint {
     }
 
     for (const subscription of userSubscriptions) {
-      await this._consumerApiService.removeSubscription(identity, subscription);
+      await this.consumerApiService.removeSubscription(identity, subscription);
     }
 
-    delete this._userSubscriptions[identity.userId];
+    delete this.userSubscriptions[identity.userId];
   }
+
 }
