@@ -128,32 +128,36 @@ export class ConsumerApiSocketEndpoint extends BaseSocketEndpoint {
       );
 
     const boundaryEventReachedSubscription =
-    this.eventAggregator.subscribe(
-      Messages.EventAggregatorSettings.messagePaths.boundaryEventReached,
-      (boundaryEventWaitingMessage: Messages.SystemEvents.BoundaryEventReachedMessage) => {
-        socketIoInstance.emit(socketSettings.paths.boundaryEventWaiting, boundaryEventWaitingMessage);
-      });
+      this.eventAggregator.subscribe(
+        Messages.EventAggregatorSettings.messagePaths.boundaryEventReached,
+        (boundaryEventWaitingMessage: Messages.SystemEvents.BoundaryEventReachedMessage) => {
+          socketIoInstance.emit(socketSettings.paths.boundaryEventWaiting, boundaryEventWaitingMessage);
+        }
+      );
 
-  const boundaryEventFinishedSubscription =
-    this.eventAggregator.subscribe(
-      Messages.EventAggregatorSettings.messagePaths.boundaryEventFinished,
-      (boundaryEventFinishedMessage: Messages.SystemEvents.BoundaryEventFinishedMessage) => {
-        socketIoInstance.emit(socketSettings.paths.boundaryEventFinished, boundaryEventFinishedMessage);
-      });
+    const boundaryEventFinishedSubscription =
+      this.eventAggregator.subscribe(
+        Messages.EventAggregatorSettings.messagePaths.boundaryEventFinished,
+        (boundaryEventFinishedMessage: Messages.SystemEvents.BoundaryEventFinishedMessage) => {
+          socketIoInstance.emit(socketSettings.paths.boundaryEventFinished, boundaryEventFinishedMessage);
+        }
+      );
 
     const callActivityReachedSubscription =
       this.eventAggregator.subscribe(
         Messages.EventAggregatorSettings.messagePaths.callActivityReached,
         (callActivityWaitingMessage: Messages.SystemEvents.CallActivityReachedMessage) => {
           socketIoInstance.emit(socketSettings.paths.callActivityWaiting, callActivityWaitingMessage);
-        });
+        }
+      );
 
     const callActivityFinishedSubscription =
       this.eventAggregator.subscribe(
         Messages.EventAggregatorSettings.messagePaths.callActivityFinished,
         (callActivityFinishedMessage: Messages.SystemEvents.CallActivityFinishedMessage) => {
           socketIoInstance.emit(socketSettings.paths.callActivityFinished, callActivityFinishedMessage);
-        });
+        }
+      );
 
     const manualTaskReachedSubscription =
     this.eventAggregator.subscribe(
