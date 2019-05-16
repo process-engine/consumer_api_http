@@ -127,6 +127,20 @@ export class ConsumerApiSocketEndpoint extends BaseSocketEndpoint {
         },
       );
 
+    const boundaryEventReachedSubscription =
+    this.eventAggregator.subscribe(
+      Messages.EventAggregatorSettings.messagePaths.boundaryEventReached,
+      (boundaryEventWaitingMessage: Messages.SystemEvents.BoundaryEventReachedMessage) => {
+        socketIoInstance.emit(socketSettings.paths.boundaryEventWaiting, boundaryEventWaitingMessage);
+      });
+
+  const boundaryEventFinishedSubscription =
+    this.eventAggregator.subscribe(
+      Messages.EventAggregatorSettings.messagePaths.boundaryEventFinished,
+      (boundaryEventFinishedMessage: Messages.SystemEvents.BoundaryEventFinishedMessage) => {
+        socketIoInstance.emit(socketSettings.paths.boundaryEventFinished, boundaryEventFinishedMessage);
+      });
+
     const callActivityReachedSubscription =
       this.eventAggregator.subscribe(
         Messages.EventAggregatorSettings.messagePaths.callActivityReached,
@@ -187,6 +201,8 @@ export class ConsumerApiSocketEndpoint extends BaseSocketEndpoint {
         },
       );
 
+    this.endpointSubscriptions.push(boundaryEventReachedSubscription);
+    this.endpointSubscriptions.push(boundaryEventFinishedSubscription);
     this.endpointSubscriptions.push(callActivityReachedSubscription);
     this.endpointSubscriptions.push(callActivityFinishedSubscription);
     this.endpointSubscriptions.push(emptyActivityReachedSubscription);
