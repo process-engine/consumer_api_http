@@ -15,9 +15,9 @@ export function createResolveIdentityMiddleware(identityService: IIdentityServic
       throw new UnauthorizedError('No auth token provided!');
     }
 
-    const jwt = bearerToken.substr('Bearer '.length);
+    const authToken = bearerToken.substr('Bearer '.length);
 
-    const resolvedIdentity = await identityService.getIdentity(jwt);
+    const resolvedIdentity = await identityService.getIdentity(authToken);
 
     request.identity = resolvedIdentity;
 
