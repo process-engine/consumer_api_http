@@ -2,20 +2,19 @@ import {BaseRouter} from '@essential-projects/http_node';
 import {IIdentityService} from '@essential-projects/iam_contracts';
 
 import {restSettings} from '@process-engine/consumer_api_contracts';
-import {ConsumerApiController} from './consumer_api_controller';
-import {createResolveIdentityMiddleware, MiddlewareFunction} from './middlewares/index';
-
 import {wrap} from 'async-middleware';
+import {ConsumerApiController} from './consumer_api_controller';
+import {createResolveIdentityMiddleware} from './middlewares/index';
 
 export class ConsumerApiRouter extends BaseRouter {
 
-  private _consumerApiRestController: ConsumerApiController;
-  private _identityService: IIdentityService;
+  private consumerApiRestController: ConsumerApiController;
+  private identityService: IIdentityService;
 
   constructor(consumerApiRestController: ConsumerApiController, identityService: IIdentityService) {
     super();
-    this._consumerApiRestController = consumerApiRestController;
-    this._identityService = identityService;
+    this.consumerApiRestController = consumerApiRestController;
+    this.identityService = identityService;
   }
 
   public get baseRoute(): string {
@@ -23,21 +22,21 @@ export class ConsumerApiRouter extends BaseRouter {
   }
 
   public async initializeRouter(): Promise<void> {
-    this._registerMiddlewares();
-    this._registerProcessModelRoutes();
-    this._registerEventRoutes();
-    this._registerEmptyActivityRoutes();
-    this._registerUserTaskRoutes();
-    this._registerManualTaskRoutes();
+    this.registerMiddlewares();
+    this.registerProcessModelRoutes();
+    this.registerEventRoutes();
+    this.registerEmptyActivityRoutes();
+    this.registerUserTaskRoutes();
+    this.registerManualTaskRoutes();
   }
 
-  private _registerMiddlewares(): void {
-    const resolveIdentity: MiddlewareFunction = createResolveIdentityMiddleware(this._identityService);
+  private registerMiddlewares(): void {
+    const resolveIdentity = createResolveIdentityMiddleware(this.identityService);
     this.router.use(wrap(resolveIdentity));
   }
 
-  private _registerProcessModelRoutes(): void {
-    const controller: ConsumerApiController = this._consumerApiRestController;
+  private registerProcessModelRoutes(): void {
+    const controller = this.consumerApiRestController;
 
     this.router.get(restSettings.paths.processModels, wrap(controller.getProcessModels.bind(controller)));
     this.router.get(restSettings.paths.processModelById, wrap(controller.getProcessModelById.bind(controller)));
@@ -47,8 +46,8 @@ export class ConsumerApiRouter extends BaseRouter {
     this.router.post(restSettings.paths.startProcessInstance, wrap(controller.startProcessInstance.bind(controller)));
   }
 
-  private _registerEventRoutes(): void {
-    const controller: ConsumerApiController = this._consumerApiRestController;
+  private registerEventRoutes(): void {
+    const controller = this.consumerApiRestController;
 
     this.router.get(restSettings.paths.processModelEvents, wrap(controller.getEventsForProcessModel.bind(controller)));
     this.router.get(restSettings.paths.correlationEvents, wrap(controller.getEventsForCorrelation.bind(controller)));
@@ -57,20 +56,22 @@ export class ConsumerApiRouter extends BaseRouter {
     this.router.post(restSettings.paths.triggerSignalEvent, wrap(controller.triggerSignalEvent.bind(controller)));
   }
 
-  private _registerEmptyActivityRoutes(): void {
-    const controller: ConsumerApiController = this._consumerApiRestController;
+  private registerEmptyActivityRoutes(): void {
+    const controller = this.consumerApiRestController;
 
     this.router.get(restSettings.paths.processModelEmptyActivities, wrap(controller.getEmptyActivitiesForProcessModel.bind(controller)));
     this.router.get(restSettings.paths.processInstanceEmptyActivities, wrap(controller.getEmptyActivitiesForProcessInstance.bind(controller)));
     this.router.get(restSettings.paths.correlationEmptyActivities, wrap(controller.getEmptyActivitiesForCorrelation.bind(controller)));
-    this.router.get(restSettings.paths.processModelCorrelationEmptyActivities,
-        wrap(controller.getEmptyActivitiesForProcessModelInCorrelation.bind(controller)));
+    this.router.get(
+      restSettings.paths.processModelCorrelationEmptyActivities,
+      wrap(controller.getEmptyActivitiesForProcessModelInCorrelation.bind(controller)),
+    );
     this.router.get(restSettings.paths.getOwnEmptyActivities, wrap(controller.getWaitingEmptyActivitiesByIdentity.bind(controller)));
     this.router.post(restSettings.paths.finishEmptyActivity, wrap(controller.finishEmptyActivity.bind(controller)));
   }
 
-  private _registerUserTaskRoutes(): void {
-    const controller: ConsumerApiController = this._consumerApiRestController;
+  private registerUserTaskRoutes(): void {
+    const controller = this.consumerApiRestController;
 
     this.router.get(restSettings.paths.processModelUserTasks, wrap(controller.getUserTasksForProcessModel.bind(controller)));
     this.router.get(restSettings.paths.processInstanceUserTasks, wrap(controller.getUserTasksForProcessInstance.bind(controller)));
@@ -80,15 +81,18 @@ export class ConsumerApiRouter extends BaseRouter {
     this.router.post(restSettings.paths.finishUserTask, wrap(controller.finishUserTask.bind(controller)));
   }
 
-  private _registerManualTaskRoutes(): void {
-    const controller: ConsumerApiController = this._consumerApiRestController;
+  private registerManualTaskRoutes(): void {
+    const controller = this.consumerApiRestController;
 
     this.router.get(restSettings.paths.processModelManualTasks, wrap(controller.getManualTasksForProcessModel.bind(controller)));
     this.router.get(restSettings.paths.processInstanceManualTasks, wrap(controller.getManualTasksForProcessInstance.bind(controller)));
     this.router.get(restSettings.paths.correlationManualTasks, wrap(controller.getManualTasksForCorrelation.bind(controller)));
-    this.router.get(restSettings.paths.processModelCorrelationManualTasks,
-       wrap(controller.getManualTasksForProcessModelInCorrelation.bind(controller)));
+    this.router.get(
+      restSettings.paths.processModelCorrelationManualTasks,
+      wrap(controller.getManualTasksForProcessModelInCorrelation.bind(controller)),
+    );
     this.router.get(restSettings.paths.getOwnManualTasks, wrap(controller.getWaitingManualTasksByIdentity.bind(controller)));
     this.router.post(restSettings.paths.finishManualTask, wrap(controller.finishManualTask.bind(controller)));
   }
+
 }
