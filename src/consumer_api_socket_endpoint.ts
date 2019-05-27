@@ -33,7 +33,7 @@ export class ConsumerApiSocketEndpoint extends BaseSocketEndpoint {
 
   public async initializeEndpoint(socketIo: SocketIO.Namespace): Promise<void> {
 
-    socketIo.on('connect', async(socket: SocketIO.Socket): Promise<void> => {
+    socketIo.on('connect', async (socket: SocketIO.Socket): Promise<void> => {
       const token = socket.handshake.headers.authorization;
 
       const identityNotSet = token === undefined;
@@ -52,7 +52,7 @@ export class ConsumerApiSocketEndpoint extends BaseSocketEndpoint {
       logger.info(`Client with socket id "${socket.id} connected."`);
 
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      socket.on('disconnect', async(reason: any): Promise<void> => {
+      socket.on('disconnect', async (reason: any): Promise<void> => {
         await this.clearUserScopeNotifications(identity);
         logger.info(`Client with socket id "${socket.id} disconnected."`);
       });
@@ -130,50 +130,50 @@ export class ConsumerApiSocketEndpoint extends BaseSocketEndpoint {
     const boundaryEventTriggeredSubscription =
       this.eventAggregator.subscribe(
         Messages.EventAggregatorSettings.messagePaths.boundaryEventTriggered,
-        (boundaryEventTriggeredMessage: Messages.SystemEvents.BoundaryEventTriggeredMessage) => {
+        (boundaryEventTriggeredMessage: Messages.SystemEvents.BoundaryEventTriggeredMessage): void => {
           socketIoInstance.emit(socketSettings.paths.boundaryEventTriggered, boundaryEventTriggeredMessage);
-        }
+        },
       );
 
     const intermediateEventTriggeredSubscription: Subscription =
       this.eventAggregator.subscribe(
         Messages.EventAggregatorSettings.messagePaths.intermediateEventTriggered,
-        (intermediateEventTriggeredMessage: Messages.SystemEvents.IntermediateEventTriggeredMessage) => {
+        (intermediateEventTriggeredMessage: Messages.SystemEvents.IntermediateEventTriggeredMessage): void => {
           socketIoInstance.emit(socketSettings.paths.intermediateEventTriggered, intermediateEventTriggeredMessage);
-        }
+        },
       );
 
     const intermediateCatchEventFinishedSubscription: Subscription =
       this.eventAggregator.subscribe(
         Messages.EventAggregatorSettings.messagePaths.intermediateCatchEventFinished,
-        (intermediateCatchEventFinishedMessage: Messages.SystemEvents.IntermediateCatchEventFinishedMessage) => {
+        (intermediateCatchEventFinishedMessage: Messages.SystemEvents.IntermediateCatchEventFinishedMessage): void => {
           socketIoInstance.emit(socketSettings.paths.intermediateCatchEventFinished, intermediateCatchEventFinishedMessage);
-        }
+        },
       );
 
     const callActivityReachedSubscription =
       this.eventAggregator.subscribe(
         Messages.EventAggregatorSettings.messagePaths.callActivityReached,
-        (callActivityWaitingMessage: Messages.SystemEvents.CallActivityReachedMessage) => {
+        (callActivityWaitingMessage: Messages.SystemEvents.CallActivityReachedMessage): void => {
           socketIoInstance.emit(socketSettings.paths.callActivityWaiting, callActivityWaitingMessage);
-        }
+        },
       );
 
     const callActivityFinishedSubscription =
       this.eventAggregator.subscribe(
         Messages.EventAggregatorSettings.messagePaths.callActivityFinished,
-        (callActivityFinishedMessage: Messages.SystemEvents.CallActivityFinishedMessage) => {
+        (callActivityFinishedMessage: Messages.SystemEvents.CallActivityFinishedMessage): void => {
           socketIoInstance.emit(socketSettings.paths.callActivityFinished, callActivityFinishedMessage);
-        }
+        },
       );
 
     const manualTaskReachedSubscription =
     this.eventAggregator.subscribe(
       Messages.EventAggregatorSettings.messagePaths.manualTaskReached,
       (manualTaskWaitingMessage: Messages.SystemEvents.ManualTaskReachedMessage): void => {
-          socketIoInstance.emit(socketSettings.paths.manualTaskWaiting, manualTaskWaitingMessage);
-        },
-      );
+        socketIoInstance.emit(socketSettings.paths.manualTaskWaiting, manualTaskWaitingMessage);
+      },
+    );
 
     const manualTaskFinishedSubscription =
       this.eventAggregator.subscribe(
