@@ -127,35 +127,27 @@ export class ConsumerApiSocketEndpoint extends BaseSocketEndpoint {
         },
       );
 
-    const boundaryEventReachedSubscription =
+    const boundaryEventTriggeredSubscription =
       this.eventAggregator.subscribe(
-        Messages.EventAggregatorSettings.messagePaths.boundaryEventReached,
-        (boundaryEventWaitingMessage: Messages.SystemEvents.BoundaryEventReachedMessage) => {
-          socketIoInstance.emit(socketSettings.paths.boundaryEventWaiting, boundaryEventWaitingMessage);
+        Messages.EventAggregatorSettings.messagePaths.boundaryEventTriggered,
+        (boundaryEventTriggeredMessage: Messages.SystemEvents.BoundaryEventTriggeredMessage) => {
+          socketIoInstance.emit(socketSettings.paths.boundaryEventTriggered, boundaryEventTriggeredMessage);
         }
       );
 
-    const boundaryEventFinishedSubscription =
+    const intermediateEventTriggeredSubscription: Subscription =
       this.eventAggregator.subscribe(
-        Messages.EventAggregatorSettings.messagePaths.boundaryEventFinished,
-        (boundaryEventFinishedMessage: Messages.SystemEvents.BoundaryEventFinishedMessage) => {
-          socketIoInstance.emit(socketSettings.paths.boundaryEventFinished, boundaryEventFinishedMessage);
+        Messages.EventAggregatorSettings.messagePaths.intermediateEventTriggered,
+        (intermediateEventTriggeredMessage: Messages.SystemEvents.IntermediateEventTriggeredMessage) => {
+          socketIoInstance.emit(socketSettings.paths.intermediateEventTriggered, intermediateEventTriggeredMessage);
         }
       );
 
-    const intermediateEventReachedSubscription: Subscription =
+    const intermediateCatchEventFinishedSubscription: Subscription =
       this.eventAggregator.subscribe(
-        Messages.EventAggregatorSettings.messagePaths.intermediateEventReached,
-        (intermediateEventWaitingMessage: Messages.SystemEvents.IntermediateEventReachedMessage) => {
-          socketIoInstance.emit(socketSettings.paths.intermediateEventWaiting, intermediateEventWaitingMessage);
-        }
-      );
-
-    const intermediateEventFinishedSubscription: Subscription =
-      this.eventAggregator.subscribe(
-        Messages.EventAggregatorSettings.messagePaths.intermediateEventFinished,
-        (intermediateEventFinishedMessage: Messages.SystemEvents.IntermediateEventFinishedMessage) => {
-          socketIoInstance.emit(socketSettings.paths.intermediateEventFinished, intermediateEventFinishedMessage);
+        Messages.EventAggregatorSettings.messagePaths.intermediateCatchEventFinished,
+        (intermediateCatchEventFinishedMessage: Messages.SystemEvents.IntermediateCatchEventFinishedMessage) => {
+          socketIoInstance.emit(socketSettings.paths.intermediateCatchEventFinished, intermediateCatchEventFinishedMessage);
         }
       );
 
@@ -221,14 +213,13 @@ export class ConsumerApiSocketEndpoint extends BaseSocketEndpoint {
         },
       );
 
-    this.endpointSubscriptions.push(boundaryEventReachedSubscription);
-    this.endpointSubscriptions.push(boundaryEventFinishedSubscription);
+    this.endpointSubscriptions.push(boundaryEventTriggeredSubscription);
     this.endpointSubscriptions.push(callActivityReachedSubscription);
     this.endpointSubscriptions.push(callActivityFinishedSubscription);
     this.endpointSubscriptions.push(emptyActivityReachedSubscription);
     this.endpointSubscriptions.push(emptyActivityFinishedSubscription);
-    this.endpointSubscriptions.push(intermediateEventReachedSubscription);
-    this.endpointSubscriptions.push(intermediateEventFinishedSubscription);
+    this.endpointSubscriptions.push(intermediateEventTriggeredSubscription);
+    this.endpointSubscriptions.push(intermediateCatchEventFinishedSubscription);
     this.endpointSubscriptions.push(userTaskReachedSubscription);
     this.endpointSubscriptions.push(userTaskFinishedSubscription);
     this.endpointSubscriptions.push(manualTaskReachedSubscription);
