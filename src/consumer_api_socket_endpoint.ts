@@ -176,12 +176,12 @@ export class ConsumerApiSocketEndpoint extends BaseSocketEndpoint {
       );
 
     const manualTaskReachedSubscription =
-    this.eventAggregator.subscribe(
-      Messages.EventAggregatorSettings.messagePaths.manualTaskReached,
-      (manualTaskWaitingMessage: Messages.SystemEvents.ManualTaskReachedMessage): void => {
-        socketIoInstance.emit(socketSettings.paths.manualTaskWaiting, manualTaskWaitingMessage);
-      },
-    );
+      this.eventAggregator.subscribe(
+        Messages.EventAggregatorSettings.messagePaths.manualTaskReached,
+        (manualTaskWaitingMessage: Messages.SystemEvents.ManualTaskReachedMessage): void => {
+          socketIoInstance.emit(socketSettings.paths.manualTaskWaiting, manualTaskWaitingMessage);
+        },
+      );
 
     const manualTaskFinishedSubscription =
       this.eventAggregator.subscribe(
