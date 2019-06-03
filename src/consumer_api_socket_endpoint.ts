@@ -135,7 +135,7 @@ export class ConsumerApiSocketEndpoint extends BaseSocketEndpoint {
         },
       );
 
-    const intermediateThrowEventTriggeredSubscription: Subscription =
+    const intermediateThrowEventTriggeredSubscription =
       this.eventAggregator.subscribe(
         Messages.EventAggregatorSettings.messagePaths.intermediateThrowEventTriggered,
         (intermediateThrowEventTriggeredMessage: Messages.SystemEvents.IntermediateThrowEventTriggeredMessage): void => {
@@ -143,7 +143,7 @@ export class ConsumerApiSocketEndpoint extends BaseSocketEndpoint {
         },
       );
 
-    const intermediateCatchEventReachedSubscription: Subscription =
+    const intermediateCatchEventReachedSubscription =
       this.eventAggregator.subscribe(
         Messages.EventAggregatorSettings.messagePaths.intermediateCatchEventReached,
         (intermediateCatchEventReachedMessage: Messages.SystemEvents.IntermediateCatchEventReachedMessage): void => {
@@ -151,7 +151,7 @@ export class ConsumerApiSocketEndpoint extends BaseSocketEndpoint {
         },
       );
 
-    const intermediateCatchEventFinishedSubscription: Subscription =
+    const intermediateCatchEventFinishedSubscription =
       this.eventAggregator.subscribe(
         Messages.EventAggregatorSettings.messagePaths.intermediateCatchEventFinished,
         (intermediateCatchEventFinishedMessage: Messages.SystemEvents.IntermediateCatchEventFinishedMessage): void => {
