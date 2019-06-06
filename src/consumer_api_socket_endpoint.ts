@@ -159,19 +159,19 @@ export class ConsumerApiSocketEndpoint extends BaseSocketEndpoint {
         },
       );
 
-    const callActivityReachedSubscription =
+    const activityReachedSubscription =
       this.eventAggregator.subscribe(
-        Messages.EventAggregatorSettings.messagePaths.callActivityReached,
-        (callActivityWaitingMessage: Messages.SystemEvents.CallActivityReachedMessage): void => {
-          socketIoInstance.emit(socketSettings.paths.callActivityWaiting, callActivityWaitingMessage);
+        Messages.EventAggregatorSettings.messagePaths.activityReached,
+        (activityWaitingMessage: Messages.SystemEvents.ActivityReachedMessage): void => {
+          socketIoInstance.emit(socketSettings.paths.activityReached, activityWaitingMessage);
         },
       );
 
-    const callActivityFinishedSubscription =
+    const activityFinishedSubscription =
       this.eventAggregator.subscribe(
-        Messages.EventAggregatorSettings.messagePaths.callActivityFinished,
-        (callActivityFinishedMessage: Messages.SystemEvents.CallActivityFinishedMessage): void => {
-          socketIoInstance.emit(socketSettings.paths.callActivityFinished, callActivityFinishedMessage);
+        Messages.EventAggregatorSettings.messagePaths.activityFinished,
+        (activityFinishedMessage: Messages.SystemEvents.ActivityFinishedMessage): void => {
+          socketIoInstance.emit(socketSettings.paths.activityFinished, activityFinishedMessage);
         },
       );
 
@@ -230,8 +230,8 @@ export class ConsumerApiSocketEndpoint extends BaseSocketEndpoint {
       );
 
     this.endpointSubscriptions.push(boundaryEventTriggeredSubscription);
-    this.endpointSubscriptions.push(callActivityReachedSubscription);
-    this.endpointSubscriptions.push(callActivityFinishedSubscription);
+    this.endpointSubscriptions.push(activityReachedSubscription);
+    this.endpointSubscriptions.push(activityFinishedSubscription);
     this.endpointSubscriptions.push(emptyActivityReachedSubscription);
     this.endpointSubscriptions.push(emptyActivityFinishedSubscription);
     this.endpointSubscriptions.push(intermediateThrowEventTriggeredSubscription);
