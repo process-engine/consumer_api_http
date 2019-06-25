@@ -162,8 +162,8 @@ export class ConsumerApiSocketEndpoint extends BaseSocketEndpoint {
     const activityReachedSubscription =
       this.eventAggregator.subscribe(
         Messages.EventAggregatorSettings.messagePaths.activityReached,
-        (activityWaitingMessage: Messages.SystemEvents.ActivityReachedMessage): void => {
-          socketIoInstance.emit(socketSettings.paths.activityReached, activityWaitingMessage);
+        (activityReachedMessage: Messages.SystemEvents.ActivityReachedMessage): void => {
+          socketIoInstance.emit(socketSettings.paths.activityReached, activityReachedMessage);
         },
       );
 
