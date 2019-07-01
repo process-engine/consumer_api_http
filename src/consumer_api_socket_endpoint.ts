@@ -159,10 +159,31 @@ export class ConsumerApiSocketEndpoint extends BaseSocketEndpoint {
         },
       );
 
-    const callActivityReachedSubscription =
+    const activityReachedSubscription =
+      this.eventAggregator.subscribe(
+        Messages.EventAggregatorSettings.messagePaths.activityReached,
+        (activityReachedMessage: Messages.SystemEvents.ActivityReachedMessage): void => {
+          socketIoInstance.emit(socketSettings.paths.activityReached, activityReachedMessage);
+        },
+      );
+
+    const activityFinishedSubscription =
+      this.eventAggregator.subscribe(
+        Messages.EventAggregatorSettings.messagePaths.activityFinished,
+        (activityFinishedMessage: Messages.SystemEvents.ActivityFinishedMessage): void => {
+          socketIoInstance.emit(socketSettings.paths.activityFinished, activityFinishedMessage);
+        },
+      );
+
+    // ---------------------- For backwards compatibility only!
+
+    const callActivityWaitingSubscription =
       this.eventAggregator.subscribe(
         Messages.EventAggregatorSettings.messagePaths.callActivityReached,
         (callActivityWaitingMessage: Messages.SystemEvents.CallActivityReachedMessage): void => {
+
+          logger.warn('"callActivityWaiting" notifications are deprecated. Use "activityReached" instead.');
+
           socketIoInstance.emit(socketSettings.paths.callActivityWaiting, callActivityWaitingMessage);
         },
       );
@@ -171,9 +192,14 @@ export class ConsumerApiSocketEndpoint extends BaseSocketEndpoint {
       this.eventAggregator.subscribe(
         Messages.EventAggregatorSettings.messagePaths.callActivityFinished,
         (callActivityFinishedMessage: Messages.SystemEvents.CallActivityFinishedMessage): void => {
+
+          logger.warn('"callActivityFinished" notifications are deprecated. Use "activityFinished" instead.');
+
           socketIoInstance.emit(socketSettings.paths.callActivityFinished, callActivityFinishedMessage);
         },
       );
+
+    // ----------------------
 
     const manualTaskReachedSubscription =
       this.eventAggregator.subscribe(
@@ -221,8 +247,18 @@ export class ConsumerApiSocketEndpoint extends BaseSocketEndpoint {
         },
       );
 
+    const processErrorSubscription =
+      this.eventAggregator.subscribe(
+        Messages.EventAggregatorSettings.messagePaths.processError,
+        (processErrorMessage: Messages.SystemEvents.ProcessErrorMessage): void => {
+          socketIoInstance.emit(socketSettings.paths.processError, processErrorMessage);
+        },
+      );
+
+    this.endpointSubscriptions.push(activityReachedSubscription);
+    this.endpointSubscriptions.push(activityFinishedSubscription);
     this.endpointSubscriptions.push(boundaryEventTriggeredSubscription);
-    this.endpointSubscriptions.push(callActivityReachedSubscription);
+    this.endpointSubscriptions.push(callActivityWaitingSubscription);
     this.endpointSubscriptions.push(callActivityFinishedSubscription);
     this.endpointSubscriptions.push(emptyActivityReachedSubscription);
     this.endpointSubscriptions.push(emptyActivityFinishedSubscription);
@@ -236,6 +272,7 @@ export class ConsumerApiSocketEndpoint extends BaseSocketEndpoint {
     this.endpointSubscriptions.push(processStartedSubscription);
     this.endpointSubscriptions.push(processEndedSubscription);
     this.endpointSubscriptions.push(processTerminatedSubscription);
+    this.endpointSubscriptions.push(processErrorSubscription);
   }
 
   /**
