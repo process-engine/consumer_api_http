@@ -20,11 +20,11 @@ export class NotificationSocketEndpoint extends BaseSocketEndpoint {
   private endpointSubscriptions: Array<Subscription> = [];
   private userSubscriptions: UserSubscriptionDictionary = {};
 
-  constructor(notificationService: APIs.INotificationConsumerApi, eventAggregator: IEventAggregator, identityService: IIdentityService) {
+  constructor(eventAggregator: IEventAggregator, identityService: IIdentityService, notificationService: APIs.INotificationConsumerApi) {
     super();
-    this.notificationService = notificationService;
     this.eventAggregator = eventAggregator;
     this.identityService = identityService;
+    this.notificationService = notificationService;
   }
 
   public get namespace(): string {
