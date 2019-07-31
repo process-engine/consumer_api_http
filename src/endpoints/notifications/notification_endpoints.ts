@@ -5,24 +5,24 @@ import {IEventAggregator, Subscription} from '@essential-projects/event_aggregat
 import {BaseSocketEndpoint} from '@essential-projects/http_node';
 import {IIdentity, IIdentityService} from '@essential-projects/iam_contracts';
 
-import {IConsumerApi, Messages, socketSettings} from '@process-engine/consumer_api_contracts';
+import {APIs, Messages, socketSettings} from '@process-engine/consumer_api_contracts';
 
 const logger: Logger = Logger.createLogger('consumer_api:http:socket.io_endpoint');
 
 type UserSubscriptionDictionary = {[userId: string]: Array<Subscription>};
 
-export class ConsumerApiSocketEndpoint extends BaseSocketEndpoint {
+export class NotificationSocketEndpoint extends BaseSocketEndpoint {
 
-  private consumerApiService: IConsumerApi;
+  private notificationService: APIs.INotificationConsumerApi;
   private eventAggregator: IEventAggregator;
   private identityService: IIdentityService;
 
   private endpointSubscriptions: Array<Subscription> = [];
   private userSubscriptions: UserSubscriptionDictionary = {};
 
-  constructor(consumerApiService: IConsumerApi, eventAggregator: IEventAggregator, identityService: IIdentityService) {
+  constructor(notificationService: APIs.INotificationConsumerApi, eventAggregator: IEventAggregator, identityService: IIdentityService) {
     super();
-    this.consumerApiService = consumerApiService;
+    this.notificationService = notificationService;
     this.eventAggregator = eventAggregator;
     this.identityService = identityService;
   }
@@ -289,7 +289,7 @@ export class ConsumerApiSocketEndpoint extends BaseSocketEndpoint {
     const userSubscriptions: Array<Subscription> = [];
 
     const onEmptyActivityForIdentityWaitingSubscription =
-      await this.consumerApiService.onEmptyActivityForIdentityWaiting(
+      await this.notificationService.onEmptyActivityForIdentityWaiting(
         identity,
         (message: Messages.SystemEvents.EmptyActivityReachedMessage): void => {
 
@@ -301,7 +301,7 @@ export class ConsumerApiSocketEndpoint extends BaseSocketEndpoint {
       );
 
     const onEmptyActivityForIdentityFinishedSubscription =
-      await this.consumerApiService.onEmptyActivityForIdentityFinished(
+      await this.notificationService.onEmptyActivityForIdentityFinished(
         identity,
         (message: Messages.SystemEvents.EmptyActivityReachedMessage): void => {
 
@@ -313,7 +313,7 @@ export class ConsumerApiSocketEndpoint extends BaseSocketEndpoint {
       );
 
     const onUserTaskForIdentityWaitingSubscription =
-      await this.consumerApiService.onUserTaskForIdentityWaiting(
+      await this.notificationService.onUserTaskForIdentityWaiting(
         identity,
         (message: Messages.SystemEvents.UserTaskReachedMessage): void => {
 
@@ -325,7 +325,7 @@ export class ConsumerApiSocketEndpoint extends BaseSocketEndpoint {
       );
 
     const onUserTaskForIdentityFinishedSubscription =
-      await this.consumerApiService.onUserTaskForIdentityFinished(
+      await this.notificationService.onUserTaskForIdentityFinished(
         identity,
         (message: Messages.SystemEvents.UserTaskReachedMessage): void => {
 
@@ -337,7 +337,7 @@ export class ConsumerApiSocketEndpoint extends BaseSocketEndpoint {
       );
 
     const onManualTaskForIdentityWaitingSubscription =
-      await this.consumerApiService.onManualTaskForIdentityWaiting(
+      await this.notificationService.onManualTaskForIdentityWaiting(
         identity,
         (message: Messages.SystemEvents.UserTaskReachedMessage): void => {
 
@@ -349,7 +349,7 @@ export class ConsumerApiSocketEndpoint extends BaseSocketEndpoint {
       );
 
     const onManualTaskForIdentityFinishedSubscription =
-      await this.consumerApiService.onManualTaskForIdentityFinished(
+      await this.notificationService.onManualTaskForIdentityFinished(
         identity,
         (message: Messages.SystemEvents.UserTaskReachedMessage): void => {
 
@@ -390,7 +390,7 @@ export class ConsumerApiSocketEndpoint extends BaseSocketEndpoint {
     }
 
     for (const subscription of userSubscriptions) {
-      await this.consumerApiService.removeSubscription(identity, subscription);
+      await this.notificationService.removeSubscription(identity, subscription);
     }
 
     delete this.userSubscriptions[identity.userId];
