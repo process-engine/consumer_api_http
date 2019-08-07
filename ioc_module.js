@@ -2,6 +2,7 @@
 
 const EmptyActivityEndpoint = require('./dist/commonjs/index').Endpoints.EmptyActivity;
 const EventEndpoint = require('./dist/commonjs/index').Endpoints.Event;
+const ExternalTaskEndpoint = require('./dist/commonjs/index').Endpoints.ExternalTask;
 const ManualTaskEndpoint = require('./dist/commonjs/index').Endpoints.ManualTask;
 const NotificationEndpoint = require('./dist/commonjs/index').Endpoints.Notification;
 const ProcessModelEndpoint = require('./dist/commonjs/index').Endpoints.ProcessModel;
@@ -13,6 +14,7 @@ const socketEndpointDiscoveryTag = require('@essential-projects/bootstrapper_con
 function registerInContainer(container) {
   registerHttpEndpoints(container);
   registerSocketEndpoints(container);
+  registerDeprecatedEndpoints(container);
 }
 
 function registerHttpEndpoints(container) {
@@ -33,6 +35,15 @@ function registerHttpEndpoints(container) {
 
   container.register('ConsumerApiEventController', EventEndpoint.EventController)
     .dependencies('ConsumerApiEventService')
+    .singleton();
+
+  container.register('ConsumerApiExternalTaskRouter', ExternalTaskEndpoint.ExternalTaskRouter)
+    .dependencies('ConsumerApiExternalTaskController', 'IdentityService')
+    .singleton()
+    .tags(routerDiscoveryTag);
+
+  container.register('ConsumerApiExternalTaskController', ExternalTaskEndpoint.ExternalTaskController)
+    .dependencies('ConsumerApiExternalTaskService')
     .singleton();
 
   container.register('ConsumerApiManualTaskRouter', ManualTaskEndpoint.ManualTaskRouter)
@@ -69,6 +80,14 @@ function registerSocketEndpoints(container) {
     .dependencies('EventAggregator', 'IdentityService', 'ConsumerApiNotificationService')
     .singleton()
     .tags(socketEndpointDiscoveryTag);
+}
+
+function registerDeprecatedEndpoints(container) {
+
+  container.register('ConsumerApiExternalTaskRouterDeprecated', ExternalTaskEndpoint.ExternalTaskRouterDeprecated)
+    .dependencies('ConsumerApiExternalTaskController', 'IdentityService')
+    .singleton()
+    .tags(routerDiscoveryTag);
 }
 
 module.exports.registerInContainer = registerInContainer;
