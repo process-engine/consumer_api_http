@@ -1,10 +1,10 @@
 import {HttpRequestWithIdentity} from '@essential-projects/http_contracts';
 
-import {APIs} from '@process-engine/consumer_api_contracts';
+import {APIs, HttpController} from '@process-engine/consumer_api_contracts';
 
 import {Response} from 'express';
 
-export class ExternalTaskController {
+export class ExternalTaskController implements HttpController.IExternalTaskHttpController {
 
   private httpCodeSuccessfulResponse = 200;
   private httpCodeSuccessfulNoContentResponse = 204;
