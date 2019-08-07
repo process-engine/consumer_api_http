@@ -34,7 +34,8 @@
     "@essential-projects/http_contracts": "^2.4.0",
     "@essential-projects/http_node": "^4.2.0",
     "@essential-projects/iam_contracts": "^3.5.0",
-    "@process-engine/consumer_api_contracts": "8.0.0-dad26234-b24",
+    "@process-engine/consumer_api_contracts": "feature~import_external_task_api",
+    "@process-engine/external_task_api_contracts": "^1.1.0",
     "async-middleware": "^1.2.1",
     "loggerhythm": "^3.0.3",
     "socket.io": "^2.2.0"
