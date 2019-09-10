@@ -18,8 +18,10 @@ export class EventController implements HttpController.IEventHttpController {
   public async getEventsForProcessModel(request: HttpRequestWithIdentity, response: Response): Promise<void> {
     const processModelId = request.params.process_model_id;
     const identity = request.identity;
+    const offset = request.query.offset || 0;
+    const limit = request.query.limit || 0;
 
-    const result = await this.eventService.getEventsForProcessModel(identity, processModelId);
+    const result = await this.eventService.getEventsForProcessModel(identity, processModelId, offset, limit);
 
     response.status(this.httpCodeSuccessfulResponse).json(result);
   }
@@ -27,8 +29,10 @@ export class EventController implements HttpController.IEventHttpController {
   public async getEventsForCorrelation(request: HttpRequestWithIdentity, response: Response): Promise<void> {
     const correlationId = request.params.correlation_id;
     const identity = request.identity;
+    const offset = request.query.offset || 0;
+    const limit = request.query.limit || 0;
 
-    const result = await this.eventService.getEventsForCorrelation(identity, correlationId);
+    const result = await this.eventService.getEventsForCorrelation(identity, correlationId, offset, limit);
 
     response.status(this.httpCodeSuccessfulResponse).json(result);
   }
@@ -37,8 +41,10 @@ export class EventController implements HttpController.IEventHttpController {
     const processModelId = request.params.process_model_id;
     const correlationId = request.params.correlation_id;
     const identity = request.identity;
+    const offset = request.query.offset || 0;
+    const limit = request.query.limit || 0;
 
-    const result = await this.eventService.getEventsForProcessModelInCorrelation(identity, processModelId, correlationId);
+    const result = await this.eventService.getEventsForProcessModelInCorrelation(identity, processModelId, correlationId, offset, limit);
 
     response.status(this.httpCodeSuccessfulResponse).json(result);
   }
