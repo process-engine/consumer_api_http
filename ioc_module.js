@@ -5,6 +5,7 @@ const ManualTaskEndpoint = require('./dist/commonjs/index').Endpoints.ManualTask
 const NotificationEndpoint = require('./dist/commonjs/index').Endpoints.Notification;
 const ProcessModelEndpoint = require('./dist/commonjs/index').Endpoints.ProcessModel;
 const UserTaskEndpoint = require('./dist/commonjs/index').Endpoints.UserTask;
+const TaskEndpoint = require('./dist/commonjs/index').Endpoints.Task;
 
 const routerDiscoveryTag = require('@essential-projects/bootstrapper_contracts').routerDiscoveryTag;
 const socketEndpointDiscoveryTag = require('@essential-projects/bootstrapper_contracts').socketEndpointDiscoveryTag;
@@ -69,6 +70,15 @@ function registerHttpEndpoints(container) {
 
   container.register('ConsumerApiUserTaskController', UserTaskEndpoint.UserTaskController)
     .dependencies('ConsumerApiUserTaskService')
+    .singleton();
+
+  container.register('ConsumerApiTaskRouter', TaskEndpoint.TaskRouter)
+    .dependencies('ConsumerApiTaskController', 'IdentityService')
+    .singleton()
+    .tags(routerDiscoveryTag);
+
+  container.register('ConsumerApiTaskController', TaskEndpoint.TaskController)
+    .dependencies('ConsumerApiTaskService')
     .singleton();
 }
 
