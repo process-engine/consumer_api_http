@@ -1,5 +1,3 @@
-'use strict'
-
 const EmptyActivityEndpoint = require('./dist/commonjs/index').Endpoints.EmptyActivity;
 const EventEndpoint = require('./dist/commonjs/index').Endpoints.Event;
 const ExternalTaskEndpoint = require('./dist/commonjs/index').Endpoints.ExternalTask;
