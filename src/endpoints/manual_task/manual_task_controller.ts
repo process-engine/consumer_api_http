@@ -18,8 +18,10 @@ export class ManualTaskController implements HttpController.IManualTaskHttpContr
   public async getManualTasksForProcessModel(request: HttpRequestWithIdentity, response: Response): Promise<void> {
     const processModelId = request.params.process_model_id;
     const identity = request.identity;
+    const offset = request.query.offset || 0;
+    const limit = request.query.limit || 0;
 
-    const result = await this.manualTaskService.getManualTasksForProcessModel(identity, processModelId);
+    const result = await this.manualTaskService.getManualTasksForProcessModel(identity, processModelId, offset, limit);
 
     response.status(this.httpCodeSuccessfulResponse).json(result);
   }
@@ -27,8 +29,10 @@ export class ManualTaskController implements HttpController.IManualTaskHttpContr
   public async getManualTasksForProcessInstance(request: HttpRequestWithIdentity, response: Response): Promise<void> {
     const processInstanceId = request.params.process_instance_id;
     const identity = request.identity;
+    const offset = request.query.offset || 0;
+    const limit = request.query.limit || 0;
 
-    const result = await this.manualTaskService.getManualTasksForProcessInstance(identity, processInstanceId);
+    const result = await this.manualTaskService.getManualTasksForProcessInstance(identity, processInstanceId, offset, limit);
 
     response.status(this.httpCodeSuccessfulResponse).json(result);
   }
@@ -36,8 +40,10 @@ export class ManualTaskController implements HttpController.IManualTaskHttpContr
   public async getManualTasksForCorrelation(request: HttpRequestWithIdentity, response: Response): Promise<void> {
     const correlationId = request.params.correlation_id;
     const identity = request.identity;
+    const offset = request.query.offset || 0;
+    const limit = request.query.limit || 0;
 
-    const result = await this.manualTaskService.getManualTasksForCorrelation(identity, correlationId);
+    const result = await this.manualTaskService.getManualTasksForCorrelation(identity, correlationId, offset, limit);
 
     response.status(this.httpCodeSuccessfulResponse).json(result);
   }
@@ -46,16 +52,20 @@ export class ManualTaskController implements HttpController.IManualTaskHttpContr
     const processModelId = request.params.process_model_id;
     const correlationId = request.params.correlation_id;
     const identity = request.identity;
+    const offset = request.query.offset || 0;
+    const limit = request.query.limit || 0;
 
-    const result = await this.manualTaskService.getManualTasksForProcessModelInCorrelation(identity, processModelId, correlationId);
+    const result = await this.manualTaskService.getManualTasksForProcessModelInCorrelation(identity, processModelId, correlationId, offset, limit);
 
     response.status(this.httpCodeSuccessfulResponse).json(result);
   }
 
   public async getWaitingManualTasksByIdentity(request: HttpRequestWithIdentity, response: Response): Promise<void> {
     const identity = request.identity;
+    const offset = request.query.offset || 0;
+    const limit = request.query.limit || 0;
 
-    const result = await this.manualTaskService.getWaitingManualTasksByIdentity(identity);
+    const result = await this.manualTaskService.getWaitingManualTasksByIdentity(identity, offset, limit);
 
     response.status(this.httpCodeSuccessfulResponse).json(result);
   }

@@ -18,8 +18,10 @@ export class EmptyActivityController implements HttpController.IEmptyActivityHtt
   public async getEmptyActivitiesForProcessModel(request: HttpRequestWithIdentity, response: Response): Promise<void> {
     const processModelId = request.params.process_model_id;
     const identity = request.identity;
+    const offset = request.query.offset || 0;
+    const limit = request.query.limit || 0;
 
-    const result = await this.emptyActivityService.getEmptyActivitiesForProcessModel(identity, processModelId);
+    const result = await this.emptyActivityService.getEmptyActivitiesForProcessModel(identity, processModelId, offset, limit);
 
     response.status(this.httpCodeSuccessfulResponse).json(result);
   }
@@ -27,8 +29,10 @@ export class EmptyActivityController implements HttpController.IEmptyActivityHtt
   public async getEmptyActivitiesForProcessInstance(request: HttpRequestWithIdentity, response: Response): Promise<void> {
     const processInstanceId = request.params.process_instance_id;
     const identity = request.identity;
+    const offset = request.query.offset || 0;
+    const limit = request.query.limit || 0;
 
-    const result = await this.emptyActivityService.getEmptyActivitiesForProcessInstance(identity, processInstanceId);
+    const result = await this.emptyActivityService.getEmptyActivitiesForProcessInstance(identity, processInstanceId, offset, limit);
 
     response.status(this.httpCodeSuccessfulResponse).json(result);
   }
@@ -36,8 +40,10 @@ export class EmptyActivityController implements HttpController.IEmptyActivityHtt
   public async getEmptyActivitiesForCorrelation(request: HttpRequestWithIdentity, response: Response): Promise<void> {
     const correlationId = request.params.correlation_id;
     const identity = request.identity;
+    const offset = request.query.offset || 0;
+    const limit = request.query.limit || 0;
 
-    const result = await this.emptyActivityService.getEmptyActivitiesForCorrelation(identity, correlationId);
+    const result = await this.emptyActivityService.getEmptyActivitiesForCorrelation(identity, correlationId, offset, limit);
 
     response.status(this.httpCodeSuccessfulResponse).json(result);
   }
@@ -46,16 +52,21 @@ export class EmptyActivityController implements HttpController.IEmptyActivityHtt
     const processModelId = request.params.process_model_id;
     const correlationId = request.params.correlation_id;
     const identity = request.identity;
+    const offset = request.query.offset || 0;
+    const limit = request.query.limit || 0;
 
-    const result = await this.emptyActivityService.getEmptyActivitiesForProcessModelInCorrelation(identity, processModelId, correlationId);
+    const result =
+      await this.emptyActivityService.getEmptyActivitiesForProcessModelInCorrelation(identity, processModelId, correlationId, offset, limit);
 
     response.status(this.httpCodeSuccessfulResponse).json(result);
   }
 
   public async getWaitingEmptyActivitiesByIdentity(request: HttpRequestWithIdentity, response: Response): Promise<void> {
     const identity = request.identity;
+    const offset = request.query.offset || 0;
+    const limit = request.query.limit || 0;
 
-    const result = await this.emptyActivityService.getWaitingEmptyActivitiesByIdentity(identity);
+    const result = await this.emptyActivityService.getWaitingEmptyActivitiesByIdentity(identity, offset, limit);
 
     response.status(this.httpCodeSuccessfulResponse).json(result);
   }
