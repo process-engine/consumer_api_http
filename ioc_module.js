@@ -5,7 +5,7 @@ const ManualTaskEndpoint = require('./dist/commonjs/index').Endpoints.ManualTask
 const NotificationEndpoint = require('./dist/commonjs/index').Endpoints.Notification;
 const ProcessModelEndpoint = require('./dist/commonjs/index').Endpoints.ProcessModel;
 const UserTaskEndpoint = require('./dist/commonjs/index').Endpoints.UserTask;
-const TaskEndpoint = require('./dist/commonjs/index').Endpoints.Task;
+const FlowNodeInstanceEndpoint = require('./dist/commonjs/index').Endpoints.FlowNodeInstance;
 
 const routerDiscoveryTag = require('@essential-projects/bootstrapper_contracts').routerDiscoveryTag;
 const socketEndpointDiscoveryTag = require('@essential-projects/bootstrapper_contracts').socketEndpointDiscoveryTag;
@@ -72,13 +72,13 @@ function registerHttpEndpoints(container) {
     .dependencies('ConsumerApiUserTaskService')
     .singleton();
 
-  container.register('ConsumerApiTaskRouter', TaskEndpoint.TaskRouter)
-    .dependencies('ConsumerApiTaskController', 'IdentityService')
+  container.register('ConsumerApiFlowNodeInstanceRouter',FlowNodeInstanceEndpoint.FlowNodeInstanceRouter)
+    .dependencies('ConsumerApiFlowNodeInstanceController', 'IdentityService')
     .singleton()
     .tags(routerDiscoveryTag);
 
-  container.register('ConsumerApiTaskController', TaskEndpoint.TaskController)
-    .dependencies('ConsumerApiTaskService')
+  container.register('ConsumerApiFlowNodeInstanceController', FlowNodeInstanceEndpoint.FlowNodeInstanceController)
+    .dependencies('ConsumerApiFlowNodeInstanceService')
     .singleton();
 }
 
