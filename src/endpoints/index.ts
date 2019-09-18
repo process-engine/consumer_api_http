@@ -6,6 +6,7 @@ import * as ManualTaskEndpoint from './manual_task/index';
 import * as NotificationEndpoint from './notifications/index';
 import * as ProcessModelEndpoint from './process_model/index';
 import * as UserTaskEndpoint from './user_task/index';
+import * as FlowNodeInstanceEndpoint from './flow_node_instance/index';
 
 export namespace Endpoints {
   export import EmptyActivity = EmptyActivityEndpoint;
@@ -15,4 +16,5 @@ export namespace Endpoints {
   export import Notification = NotificationEndpoint;
   export import ProcessModel = ProcessModelEndpoint;
   export import UserTask = UserTaskEndpoint;
+  export import FlowNodeInstance = FlowNodeInstanceEndpoint;
 }
