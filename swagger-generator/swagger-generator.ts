@@ -4,9 +4,9 @@ import * as fs from 'fs';
 import * as typescript from 'typescript';
 
 const swagger = new Swagger();
-swagger.info('ManagementApi', '1.0', 'This is ManagementApi.');
+swagger.info('ConsumerApi', '1.0', 'This is the swagger ui documentation of the ConsumerApi.');
 
-const baseRoute = '/api/management/v1';
+const baseRoute = '/api/consumer/v1';
 
 type SwaggerParameter = {
   in: string;
@@ -123,7 +123,7 @@ function generateSwaggerJson(): void {
 
   swagger.securityDefinition('bearer', {
     type: 'apiKey',
-    description: 'An Identity Token is required to make requests to the ManagementApi.\nDummy token: \'Bearer ZHVtbXlfdG9rZW4=\'',
+    description: 'An Identity Token is required to make requests to the ConsumerApi.\nDummy token: \'Bearer ZHVtbXlfdG9rZW4=\'',
     in: 'header',
     name: 'Identity Token',
   });
