@@ -222,7 +222,7 @@ function extractSwaggerDataFromContracts(): void {
         return;
       }
 
-      const variable: any = statementNode.declarations[0];
+      const variable = statementNode.declarations[0] as any;
       const variableName = variable.name.getText(sourceFile);
       const properties = variable.initializer.properties;
 
