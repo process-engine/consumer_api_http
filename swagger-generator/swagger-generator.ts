@@ -182,7 +182,7 @@ function getSwaggerParametersForRoute(route): Array<SwaggerParameter> {
 }
 
 function extractParametersFromRoute(route: string): Array<string> {
-  const parameters: Array<string> = route.split('/')
+  const parameters = route.split('/')
     .filter((routePart: string): boolean => {
       return routePart.startsWith(':');
     })
@@ -200,7 +200,7 @@ function createSwaggerRoutes(sourceFile: typescript.SourceFile, properties: Arra
     const propertyDocumentation propertyTextWithComment.replace(propertyTextWithoutComment, '');
 
     const routeName = property.name.getText(sourceFile);
-    const swaggerRoute: SwaggerRoute = convertPropertyDocumentationToSwaggerRoute(propertyDocumentation);
+    const swaggerRoute = convertPropertyDocumentationToSwaggerRoute(propertyDocumentation);
 
     addSwaggerRoute(routeName, swaggerRoute);
   }
@@ -224,7 +224,7 @@ function extractSwaggerDataFromContracts(): void {
 
       const variable: any = statementNode.declarations[0];
       const variableName = variable.name.getText(sourceFile);
-      const properties: Array<any> = variable.initializer.properties;
+      const properties = variable.initializer.properties;
 
       if (variableName === 'params') {
         createSwaggerPathParameter(sourceFile, properties);
