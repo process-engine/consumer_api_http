@@ -8,7 +8,7 @@ import {Response} from 'express';
 
 export class SwaggerController implements HttpController.ISwaggerHttpController {
 
-  private httpCodeSuccessfulResponse: number = 200;
+  private httpCodeSuccessfulResponse = 200;
 
   public async getSwaggerJson(request: HttpRequestWithIdentity, response: Response): Promise<void> {
     response.status(this.httpCodeSuccessfulResponse).sendFile(path.join(__dirname, '..', '..', '..', '..', 'swagger.json'));
