@@ -34,3 +34,6 @@ node_modules
 .classpath
 .project
 .settings/
+
+# Swagger files
+swagger.json

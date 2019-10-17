@@ -14,6 +14,12 @@ export function createResolveIdentityMiddleware(identityService: IIdentityServic
   return async (request: HttpRequestWithIdentity, response: Response, next: NextFunction): Promise<void> => {
     const bearerToken = request.get('authorization');
 
+    if (request.url === '/swagger') {
+      next();
+
+      return;
+    }
+
     if (!bearerToken) {
       throw new UnauthorizedError('No auth token provided!');
     }

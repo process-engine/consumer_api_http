@@ -4,6 +4,7 @@ const ExternalTaskEndpoint = require('./dist/commonjs/index').Endpoints.External
 const ManualTaskEndpoint = require('./dist/commonjs/index').Endpoints.ManualTask;
 const NotificationEndpoint = require('./dist/commonjs/index').Endpoints.Notification;
 const ProcessModelEndpoint = require('./dist/commonjs/index').Endpoints.ProcessModel;
+const SwaggerEndpoint = require('./dist/commonjs/index').Endpoints.Swagger;
 const UserTaskEndpoint = require('./dist/commonjs/index').Endpoints.UserTask;
 const FlowNodeInstanceEndpoint = require('./dist/commonjs/index').Endpoints.FlowNodeInstance;
 
@@ -63,6 +64,15 @@ function registerHttpEndpoints(container) {
     .dependencies('ConsumerApiProcessModelService')
     .singleton();
 
+  container.register('ConsumerApiSwaggerRouter', SwaggerEndpoint.SwaggerRouter)
+    .dependencies('ConsumerApiSwaggerController')
+    .singleton()
+    .tags(routerDiscoveryTag);
+
+  container.register('ConsumerApiSwaggerController', SwaggerEndpoint.SwaggerController)
+    .dependencies()
+    .singleton();
+
   container.register('ConsumerApiUserTaskRouter', UserTaskEndpoint.UserTaskRouter)
     .dependencies('ConsumerApiUserTaskController', 'IdentityService')
     .singleton()
@@ -72,7 +82,7 @@ function registerHttpEndpoints(container) {
     .dependencies('ConsumerApiUserTaskService')
     .singleton();
 
-  container.register('ConsumerApiFlowNodeInstanceRouter',FlowNodeInstanceEndpoint.FlowNodeInstanceRouter)
+  container.register('ConsumerApiFlowNodeInstanceRouter', FlowNodeInstanceEndpoint.FlowNodeInstanceRouter)
     .dependencies('ConsumerApiFlowNodeInstanceController', 'IdentityService')
     .singleton()
     .tags(routerDiscoveryTag);
@@ -80,6 +90,7 @@ function registerHttpEndpoints(container) {
   container.register('ConsumerApiFlowNodeInstanceController', FlowNodeInstanceEndpoint.FlowNodeInstanceController)
     .dependencies('ConsumerApiFlowNodeInstanceService')
     .singleton();
+
 }
 
 function registerSocketEndpoints(container) {
