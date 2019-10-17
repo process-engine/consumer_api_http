@@ -15,9 +15,7 @@ export function createResolveIdentityMiddleware(identityService: IIdentityServic
     const bearerToken = request.get('authorization');
 
     if (request.url === '/swagger') {
-      next();
-
-      return;
+      return next();
     }
 
     if (!bearerToken) {
