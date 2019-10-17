@@ -125,7 +125,7 @@ function generateSwaggerJson(): void {
     type: 'apiKey',
     description: 'An Identity Token is required to make requests to the ConsumerApi.\nDummy token: \'Bearer ZHVtbXlfdG9rZW4=\'',
     in: 'header',
-    name: 'Identity Token',
+    name: 'Authorization',
   });
   swagger.globalSecurity('bearer');
 
