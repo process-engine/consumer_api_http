@@ -197,7 +197,7 @@ function createSwaggerRoutes(sourceFile: typescript.SourceFile, properties: Arra
   for (const property of properties) {
     const propertyTextWithComment = property.getFullText(sourceFile);
     const propertyTextWithoutComment = property.getText(sourceFile);
-    const propertyDocumentation propertyTextWithComment.replace(propertyTextWithoutComment, '');
+    const propertyDocumentation = propertyTextWithComment.replace(propertyTextWithoutComment, '');
 
     const routeName = property.name.getText(sourceFile);
     const swaggerRoute = convertPropertyDocumentationToSwaggerRoute(propertyDocumentation);
