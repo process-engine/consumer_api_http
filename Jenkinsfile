@@ -70,6 +70,16 @@ pipeline {
         sh('npm run build')
       }
     }
+    stage('Create Swagger Files') {
+      when {
+        expression {buildIsRequired == true}
+      }
+      steps {
+        sh('node --version')
+        sh('npm run build-swagger-generator')
+        sh('npm run run-swagger-generator')
+      }
+    }
     stage('Test') {
       when {
         expression {buildIsRequired == true}
