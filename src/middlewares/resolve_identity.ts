@@ -36,6 +36,6 @@ export function createResolveIdentityMiddleware(identityService: IIdentityServic
 
     request.identity = resolvedIdentity;
 
-    next();
+    return next();
   };
 }
