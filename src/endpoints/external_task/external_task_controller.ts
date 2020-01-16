@@ -52,7 +52,7 @@ export class ExternalTaskController implements HttpController.IExternalTaskHttpC
 
     const payload = request.body;
 
-    await this.externalTaskService.handleBpmnError(identity, payload.workerId, externalTaskId, payload.errorCode);
+    await this.externalTaskService.handleBpmnError(identity, payload.workerId, externalTaskId, payload.errorCode, payload.errorMessage);
 
     response.status(this.httpCodeSuccessfulNoContentResponse).send();
   }
@@ -64,7 +64,9 @@ export class ExternalTaskController implements HttpController.IExternalTaskHttpC
 
     const payload = request.body;
 
-    await this.externalTaskService.handleServiceError(identity, payload.workerId, externalTaskId, payload.errorMessage, payload.errorDetails);
+    await this
+      .externalTaskService
+      .handleServiceError(identity, payload.workerId, externalTaskId, payload.errorMessage, payload.errorDetails, payload.errorCode);
 
     response.status(this.httpCodeSuccessfulNoContentResponse).send();
   }
