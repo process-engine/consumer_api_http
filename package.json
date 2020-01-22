@@ -55,10 +55,10 @@
     "build-commonjs": "tsc",
     "build-amd": "tsc --module amd --outDir ./dist/amd",
     "build-swagger-generator": "tsc -p swagger-generator",
-    "prepare": "npm run build",
+    "prepare": "npm run build && npm run lint && npm run generate-swagger-docs",
     "lint": "eslint src/**/*.ts src/*.ts",
     "lint-fix": "eslint --fix src/**/*.ts src/*.ts",
-    "run-swagger-generator": "node ./swagger-generator/dist/swagger-generator.js",
+    "generate-swagger-docs": "node ./dist/commonjs/endpoints/swagger/swagger-generator.js",
     "test": ":"
   }
 }
