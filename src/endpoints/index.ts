@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
+import * as ApplicationInfoEndpoint from './application_info/index';
 import * as EmptyActivityEndpoint from './empty_activity/index';
 import * as EventEndpoint from './events/index';
 import * as ExternalTaskEndpoint from './external_task/index';
@@ -10,6 +11,7 @@ import * as FlowNodeInstanceEndpoint from './flow_node_instance/index';
 import * as SwaggerEndpoint from './swagger/index';
 
 export namespace Endpoints {
+  export import ApplicationInfo = ApplicationInfoEndpoint;
   export import EmptyActivity = EmptyActivityEndpoint;
   export import Event = EventEndpoint;
   export import ExternalTask = ExternalTaskEndpoint;
