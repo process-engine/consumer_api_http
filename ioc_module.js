@@ -1,3 +1,4 @@
+const ApplicationInfoEndpoint = require('./dist/commonjs/index').Endpoints.ApplicationInfo;
 const EmptyActivityEndpoint = require('./dist/commonjs/index').Endpoints.EmptyActivity;
 const EventEndpoint = require('./dist/commonjs/index').Endpoints.Event;
 const ExternalTaskEndpoint = require('./dist/commonjs/index').Endpoints.ExternalTask;
@@ -18,6 +19,15 @@ function registerInContainer(container) {
 }
 
 function registerHttpEndpoints(container) {
+
+  container.register('ConsumerApiApplicationInfoRouter', ApplicationInfoEndpoint.ApplicationInfoRouter)
+    .dependencies('ConsumerApiApplicationInfoController')
+    .singleton()
+    .tags(routerDiscoveryTag);
+
+  container.register('ConsumerApiApplicationInfoController', ApplicationInfoEndpoint.ApplicationInfoController)
+    .dependencies('ConsumerApiApplicationInfoService')
+    .singleton();
 
   container.register('ConsumerApiEmptyActivityRouter', EmptyActivityEndpoint.EmptyActivityRouter)
     .dependencies('ConsumerApiEmptyActivityController', 'IdentityService')
