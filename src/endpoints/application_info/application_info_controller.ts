@@ -15,7 +15,8 @@ export class ApplicationInfoController implements HttpController.IApplicationInf
   }
 
   public async getApplicationInfo(request: HttpRequestWithIdentity, response: Response): Promise<void> {
-    const result = await this.applicationInfoService.getApplicationInfo();
+    const identity = request.identity;
+    const result = await this.applicationInfoService.getApplicationInfo(identity);
 
     response.status(this.httpCodeSuccessfulResponse).json(result);
   }
