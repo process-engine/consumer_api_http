@@ -1,5 +1,6 @@
 import {wrap} from 'async-middleware';
 
+import {deprecate} from '@essential-projects/http_contracts';
 import {BaseRouter} from '@essential-projects/http_node';
 import {IIdentityService} from '@essential-projects/iam_contracts';
 
@@ -33,11 +34,31 @@ export class ExternalTaskRouterDeprecated extends BaseRouter {
 
     const controller = this.externalTaskController;
 
-    this.router.post(restSettings.paths.fetchAndLockExternalTasks, wrap(controller.fetchAndLockExternalTasks.bind(controller)));
-    this.router.post(restSettings.paths.extendExternalTaskLock, wrap(controller.extendLock.bind(controller)));
-    this.router.post(restSettings.paths.finishExternalTaskWithBpmnError, wrap(controller.handleBpmnError.bind(controller)));
-    this.router.post(restSettings.paths.finishExternalTaskWithServiceError, wrap(controller.handleServiceError.bind(controller)));
-    this.router.post(restSettings.paths.finishExternalTask, wrap(controller.finishExternalTask.bind(controller)));
+    this.router.post(
+      restSettings.paths.fetchAndLockExternalTasks,
+      deprecate(`api/consumer/v1${restSettings.paths.fetchAndLockExternalTasks}`),
+      wrap(controller.fetchAndLockExternalTasks.bind(controller)),
+    );
+    this.router.post(
+      restSettings.paths.extendExternalTaskLock,
+      deprecate(`api/consumer/v1${restSettings.paths.extendExternalTaskLock}`),
+      wrap(controller.extendLock.bind(controller)),
+    );
+    this.router.post(
+      restSettings.paths.finishExternalTaskWithBpmnError,
+      deprecate(`api/consumer/v1${restSettings.paths.finishExternalTaskWithBpmnError}`),
+      wrap(controller.handleBpmnError.bind(controller)),
+    );
+    this.router.post(
+      restSettings.paths.finishExternalTaskWithServiceError,
+      deprecate(`api/consumer/v1${restSettings.paths.finishExternalTaskWithServiceError}`),
+      wrap(controller.handleServiceError.bind(controller)),
+    );
+    this.router.post(
+      restSettings.paths.finishExternalTask,
+      deprecate(`api/consumer/v1${restSettings.paths.finishExternalTaskWithServiceError}`),
+      wrap(controller.finishExternalTask.bind(controller)),
+    );
   }
 
   private registerMiddlewares(): void {
